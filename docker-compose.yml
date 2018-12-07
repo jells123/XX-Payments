@@ -15,9 +15,9 @@ services:
     depends_on:
       - db
   node:
-    build:
-      context: ./front-end
-    command: "npm start"
+    build: front-end
+    command: "npm start ./package.json"
+    working_dir: /app
     volumes:
       - .:/app
       - /app/node_modules
