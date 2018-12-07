@@ -15,10 +15,12 @@ services:
     depends_on:
       - db
   node:
-    build: ./front-end
+    build: front-end
     command: "npm start ./package.json"
-    expose:
-      - 8081
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - "8081:8081"
     depends_on:
