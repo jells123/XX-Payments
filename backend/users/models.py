@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
 class Profile(models.Model):
-    user = models.ForeignKey('auth.User', related_name='profile', on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', related_name='profile', on_delete=models.CASCADE)
     #image = models.ImageField(default='default.jpg', upload_to='profile_pics')
 
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")

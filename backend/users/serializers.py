@@ -13,7 +13,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = serializers.HyperlinkedRelatedField(many=True, view_name="profile-detail", read_only=True)
+    profile = ProfileSerializer(many=False, read_only=True)
 
     class Meta:
         model = User
