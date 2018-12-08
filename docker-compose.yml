@@ -5,7 +5,7 @@ services:
     image: postgres
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-  web:
+  backend:
     build: ./backend
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
@@ -14,15 +14,16 @@ services:
       - "8000:8000"
     depends_on:
       - db
-      
-  front-end:
-    build: frontend/dev/mobile-app-builder
-    volumes:
-      - .:/usr/src/app
-    working_dir: /usr/src/app
-    command: sh ./frontend/dev/mobile-app.sh
-    ports:
-      - 19000:19000
-      - 19001:19001
-      - 19002:19002
 
+  # frontend:
+  #   build: ./frontend/dev/mobile-app-builder
+  #   volumes:
+  #     - .:/usr/src/app
+  #   working_dir: /usr/src/app
+  #   environment:
+  #     - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.5
+  #   command: sh ./frontend/dev/mobile-app.sh
+  #   ports:
+  #     - 19000:19000
+  #     - 19001:19001
+  #     - 19002:19002
