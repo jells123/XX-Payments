@@ -1,3 +1,3 @@
-back-end/*/__pycache__/
-front-end/node_modules/*
+backend/*/__pycache__/
+frontend/mobile-app/node_modules/*
 postgres-data/*

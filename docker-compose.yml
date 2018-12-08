@@ -6,22 +6,23 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
   web:
-    build: ./back-end
+    build: ./backend
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./back-end:/code
+      - ./backend:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
-  node:
-    build: 
-      context: ./front-end
-    command: "npm start"
+      
+  front-end:
+    build: frontend/dev/mobile-app-builder
     volumes:
-      - ./front-end:/usr/app
-      - /usr/app/node_modules
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: sh ./frontend/dev/mobile-app.sh
     ports:
-      - "8081:8081"
-    depends_on:
-      - web
+      - 19000:19000
+      - 19001:19001
+      - 19002:19002
+
