@@ -19,8 +19,8 @@ services:
     command: "npm start ./package.json"
     working_dir: /app
     volumes:
-      - .:/front-end/app
-      - /app/node_modules
+      - ./front-end:/usr/app
+      - /usr/app/node_modules
     ports:
       - "8081:8081"
     depends_on:
