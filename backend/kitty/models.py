@@ -9,5 +9,3 @@ class Kitty(models.Model):
 
     class Meta:
         ordering = ('created', )
-
-    #def save(self, *args, **kwargs):
