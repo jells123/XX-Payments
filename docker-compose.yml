@@ -6,10 +6,10 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
   web:
-    build: .
+    build: ./back-end
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/back-end/code
     ports:
       - "8000:8000"
     depends_on:
@@ -19,10 +19,9 @@ services:
     command: "npm start ./package.json"
     working_dir: /app
     volumes:
-      - .:/app
+      - .:/front-end/app
       - /app/node_modules
     ports:
       - "8081:8081"
     depends_on:
       - web
-
