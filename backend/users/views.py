@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Profile
-from .serializers import ProfileSerializer, UserSerializer
+from .models import Profile, Contact
+from .serializers import ProfileSerializer, UserSerializer, ContactSerializer
 from rest_framework.decorators import action
 
 
@@ -20,9 +20,17 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer

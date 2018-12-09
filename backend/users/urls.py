@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'profiles', views.ProfileViewSet)
 router.register(r'users', views.UserViewSet)
+router.register(r'contacts', views.ContactViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
