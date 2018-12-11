@@ -13,7 +13,7 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     #user = serializers.HyperlinkedRelatedField(many=False, view_name='user-detail', read_only=True)
-    contacts = serializers.HyperlinkedRelatedField(many=False, view_name='contact-detail', read_only=True)
+    contacts = serializers.HyperlinkedRelatedField(many=True, view_name='contact-detail', queryset=Contact.objects.all())
 
     class Meta:
         model = Profile

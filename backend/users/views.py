@@ -34,3 +34,10 @@ class ContactViewSet(viewsets.ModelViewSet):
     """
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+    def perform_create(self, serializer):
+        serializer.is_valid()
+        second_serializer = Contact(profile_1=serializer.validated_data['profile_2'],
+            profile_2=serializer.validated_data['profile_1'])
+        second_serializer.save()
+        serializer.save()

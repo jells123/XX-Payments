@@ -24,5 +24,5 @@ class Profile(models.Model):
 
 
 class Contact(models.Model):
-    profile_1 = models.ForeignKey(Profile, related_name='contact1', on_delete=models.CASCADE)
-    profile_2 = models.ForeignKey(Profile, related_name='contact2', on_delete=models.CASCADE)
+    profile_1 = models.ForeignKey(Profile, related_name='contacts', on_delete=models.CASCADE)
+    profile_2 = models.ForeignKey(Profile, on_delete=models.CASCADE)
