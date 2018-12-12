@@ -4,19 +4,37 @@ from rest_framework.decorators import api_view, detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Kitty
+from .models import Kitty, Transaction
 from .permissions import IsOwnerOrReadOnly
-from .serializers import KittySerializer, UserSerializer
+from .serializers import KittySerializer, TransactionSerializer
+from .models import Profile, Contact
+from .serializers import ProfileSerializer, UserSerializer, ContactSerializer
 from rest_framework.decorators import action
 
 
-class KittyViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
 
-    Additionally we also provide an extra `highlight` action.
-    """
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+    def perform_create(self, serializer):
+        serializer.is_valid()
+        second_contact = Contact(profile_1=serializer.validated_data['profile_2'],
+            profile_2=serializer.validated_data['profile_1'])
+        second_contact.save()
+        serializer.save()
+
+
+class KittyViewSet(viewsets.ModelViewSet):
     queryset = Kitty.objects.all()
     serializer_class = KittySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
@@ -26,9 +44,7 @@ class KittyViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer

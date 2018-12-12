@@ -25,13 +25,12 @@ SECRET_KEY = '@04h!^t7^4&5ffda)sf^j(@67x64c%ldwo9*zs$z-qg(c9%smt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['172.20.10.8', 'localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
     'kitty.apps.KittyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -85,8 +84,6 @@ DATABASES = {
         'PORT': 5432,
     }
 }
-
-ALLOWED_HOSTS = ['172.20.10.8', 'localhost', '127.0.0.1']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
