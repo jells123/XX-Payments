@@ -35,9 +35,9 @@ class KittySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = ProfileSerializer(many=False, read_only=True)
-    kitties = serializers.HyperlinkedRelatedField(many=True, view_name='kitty-detail', read_only=True)
-    transactions = serializers.HyperlinkedRelatedField(many=True, view_name='transaction-detail', read_only=True)
+    profile = ProfileSerializer(many=False, read_only=True, required=False)
+    kitties = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='kitty-detail', required=False)
+    transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-detail', required=False)
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -47,7 +47,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name', 'email', 'kitties', 'profile', 'transactions')
+        #fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name', 'email', 'kitties', 'profile', 'transactions')
+        fields = ('url', 'id', 'username', 'password', 'kitties', 'profile', 'transactions')
         extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -65,13 +66,26 @@ class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('username', 'password')
 
+class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Unable to log in with provided credentials.")
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     kitty = serializers.HyperlinkedRelatedField(many=False, view_name='kitty-detail', queryset=Kitty.objects.all())
     participant = serializers.HyperlinkedRelatedField(many=False, view_name='user-detail', queryset=User.objects.all())
 #
 
-    class Meta: 
+    class Meta:
         model = Transaction
         fields = '__all__'
 

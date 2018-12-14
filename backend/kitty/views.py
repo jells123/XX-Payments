@@ -18,7 +18,7 @@ class LoginAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        
+
         # add this LOG IN event to event-log-table
         login_event = UserEvent.objects.create(user=user, event_type=UserEvent.LOGIN)
 
