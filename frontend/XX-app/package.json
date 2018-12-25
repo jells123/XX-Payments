@@ -15,10 +15,10 @@
     "expo": "^31.0.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
-    "react-native-extended-stylesheet": "^0.11.0",
+    "react-native-easy-toast": "^1.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
-    "react-navigation": "^2.18.2",
-    "tcomb-form-native": "^0.6.20"
+    "react-native-simple-toast": "0.0.8",
+    "react-navigation": "^2.18.2"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",

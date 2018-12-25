@@ -14,16 +14,3 @@ services:
       - "8000:8000"
     depends_on:
       - db
-
-  # frontend:
-  #   build: ./frontend/dev/mobile-app-builder
-  #   volumes:
-  #     - .:/usr/src/app
-  #   working_dir: /usr/src/app
-  #   environment:
-  #     - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.5
-  #   command: sh ./frontend/dev/mobile-app.sh
-  #   ports:
-  #     - 19000:19000
-  #     - 19001:19001
-  #     - 19002:19002

@@ -36,9 +36,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     kitties = serializers.HyperlinkedRelatedField(many=True, view_name='kitty-detail', read_only=True)
     transactions = serializers.HyperlinkedRelatedField(many=True, view_name='transaction-detail', read_only=True)
 
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'first_name', 'last_name', 'kitties', 'profile', 'transactions')
+        fields = ('url', 'id', 'username', 'first_name', 'password', 'kitties', 'profile', 'transactions')
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):

@@ -14,6 +14,7 @@ class Login extends Component {
 
         <View style={styles.loginContainer}>
             <Image resizeMode="contain" style={styles.logo} source={require('../../assets/images/watermelon.gif')} />
+            <Image resizeMode="contain" style={styles.logo} source={require('../../assets/images/dumpling.gif')} />
         </View>
 
         <View style={styles.formContainer}>

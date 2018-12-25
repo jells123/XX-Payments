@@ -11,20 +11,20 @@ class LoginForm extends Component {
         return (
             <View style={styles.container}>
 
-               <TextInput style = {GlobalStyles.input} 
-                    autoCapitalize="none" 
-                    onSubmitEditing={() => this.passwordInput.focus()} 
-                    autoCorrect={false} 
-                    keyboardType='email-address' 
-                    returnKeyType="next" 
-                    placeholder='Username' 
+               <TextInput style = {GlobalStyles.input}
+                    autoCapitalize="none"
+                    onSubmitEditing={() => this.passwordInput.focus()}
+                    autoCorrect={false}
+                    keyboardType='email-address'
+                    returnKeyType="next"
+                    placeholder='User email' 
                     placeholderTextColor='rgba(225,225,225,0.7)'/>
 
-                <TextInput style = {GlobalStyles.input}   
-                    returnKeyType="go" 
-                    ref={(input)=> this.passwordInput = input} 
-                    placeholder='Password' 
-                    placeholderTextColor='rgba(225,225,225,0.7)' 
+                <TextInput style = {GlobalStyles.input}
+                    returnKeyType="go"
+                    ref={(input)=> this.passwordInput = input}
+                    placeholder='Password'
+                    placeholderTextColor='rgba(225,225,225,0.7)'
                     secureTextEntry/>
 
                 <Text style={styles.registerText}
@@ -32,11 +32,11 @@ class LoginForm extends Component {
                     Create new account
                 </Text>
 
-                <TouchableOpacity style={GlobalStyles.buttonContainer} 
+                <TouchableOpacity style={GlobalStyles.buttonContainer}
                                     // onPress={onButtonPress}
                                     >
                             <Text  style={GlobalStyles.buttonText}>LOGIN</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
 
             </View>
         );

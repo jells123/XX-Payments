@@ -2,13 +2,14 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { withNavigation } from 'react-navigation';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 import GlobalStyles from '../../constants/Style';
 
 /*
 TODO:
-Make RegisterForm Keyboard-Aware! 
+Make RegisterForm Keyboard-Aware!
 tcomb-form-native is not best for it
 (unless you want lots of code as a work-around)
 */
@@ -40,20 +41,44 @@ const options = {
 
 // create a component
 class RegisterForm extends Component {
+    _onButtonPress = () => {
+      var data = this.refs.form.getValue();
+
+      if(data) {
+        fetch('http://192.168.1.5:8000/users/', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: data.username,
+            first_name: data.firstName,
+            password: data.password
+          }),
+        }).then(response => {
+          this.refs.toast.show('Success!');
+        }).catch(err => {
+          this.refs.toast.show('Error :(');
+        });
+      }
+
+    };
+
     render() {
         return (
             <KeyboardAwareScrollView style={styles.container}>
-               <Form 
-                ref={c => this._form = c}
-                type={User} 
+               <Form
+                ref={"form"}
+                type={User}
                 options={options} // pass the options via props
                />
 
-                <TouchableOpacity style={GlobalStyles.buttonContainer} 
-                            // onPress={onButtonPress}
-                    >
+                <TouchableOpacity style={GlobalStyles.buttonContainer}
+                            onPress={this._onButtonPress}>
                     <Text  style={GlobalStyles.buttonText}>REGISTER :)</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
+                <Toast ref="toast"/>
             </KeyboardAwareScrollView>
         );
     }
@@ -62,7 +87,7 @@ class RegisterForm extends Component {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        flex: 1, 
+        flex: 1,
         marginBottom: 20
        },
 });
