@@ -22,9 +22,9 @@ const User = t.struct({
     username: t.String,
     password: t.String,
 
-    firstName: t.String,
-    lastName: t.String,
-    phoneNumber: t.Number,
+    firstName: t.maybe(t.String),
+    lastName: t.maybe(t.String),
+    phoneNumber: t.maybe(t.Number),
 
     email: t.String,
     terms: t.Boolean,
@@ -35,16 +35,42 @@ const options = {
       terms: {
         label: 'I Agree to all Terms, I never read them anyway.',
       },
+      password: {
+        password: true,
+        secureTextEntry: true
+      }
     },
     stylesheet: bootstrap
   };
 
 // create a component
 class RegisterForm extends Component {
+    constructor(props){
+      super(props);
+
+      this.state = {
+        value: null
+      }
+    }
+
+    _onChange = (value) => {
+      this.setState({ value });
+    };
+
+    _clearForm = () => {
+      // clear content from all textbox
+      this.setState({ value: null });
+    };
+
     _onButtonPress = () => {
       var data = this.refs.form.getValue();
 
       if(data) {
+        if(!data.terms) {
+          this.refs.toast.show('You have to accept terms first');
+          return;
+        }
+
         fetch('http://192.168.1.5:8000/users/', {
           method: 'POST',
           headers: {
@@ -53,11 +79,16 @@ class RegisterForm extends Component {
           },
           body: JSON.stringify({
             username: data.username,
-            first_name: data.firstName,
             password: data.password
           }),
-        }).then(response => {
-          this.refs.toast.show('Success!');
+
+        }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson.id);
+          //this.props.navigation.navigate('Login');
+          this.refs.toast.show('Success! You can now log in', DURATION.LENGTH_LONG);
+          this._clearForm();
+
         }).catch(err => {
           this.refs.toast.show('Error :(');
         });
@@ -72,6 +103,8 @@ class RegisterForm extends Component {
                 ref={"form"}
                 type={User}
                 options={options} // pass the options via props
+                value={this.state.value}
+                onChange={this._onChange.bind(this)}
                />
 
                 <TouchableOpacity style={GlobalStyles.buttonContainer}

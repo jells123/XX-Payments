@@ -31,12 +31,13 @@ const styles = StyleSheet.create({
   loginContainer:{
       alignItems: 'center',
       flex: 1,
+      flexDirection: 'row',
       justifyContent: 'center'
   },
   logo: {
-      position: 'absolute',
-      // width: 300,
-      // height: 100,
+      //position: 'absolute',
+      width: 100,
+      //height: 100,
       flex :1
   }
 });

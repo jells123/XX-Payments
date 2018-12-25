@@ -8,9 +8,20 @@ from .models import Kitty, Transaction
 from .permissions import IsOwnerOrReadOnly
 from .serializers import KittySerializer, TransactionSerializer
 from .models import Profile, Contact
-from .serializers import ProfileSerializer, UserSerializer, ContactSerializer
+from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer, ContactSerializer
 from rest_framework.decorators import action
 
+
+class LoginAPI(generics.GenericAPIView):
+    serializer_class = LoginUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data
+        })
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()

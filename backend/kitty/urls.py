@@ -14,4 +14,5 @@ router.register(r'transactions', views.TransactionViewSet)
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
+    path('login/', views.LoginAPI.as_view())
 ]

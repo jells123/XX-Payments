@@ -4,6 +4,8 @@ from rest_framework import serializers
 from .models import Kitty, Transaction
 from .models import Profile, Contact
 
+from django.contrib.auth import authenticate
+
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -44,8 +46,23 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'first_name', 'password', 'kitties', 'profile', 'transactions')
+        fields = ('url', 'id', 'username', 'password', 'kitties', 'profile', 'transactions')
         extra_kwargs = {'password': {'write_only': True}}
+
+
+class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Unable to log in with provided credentials.")
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
