@@ -18,6 +18,11 @@ import t from 'tcomb-form-native';
 import bootstrap from 'tcomb-form-native/lib/stylesheets/bootstrap.js';
 const Form = t.form.Form;
 
+const Email = t.refinement(t.String, email => {
+  const reg = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/; //or any other regexp
+  return reg.test(email);
+});
+
 const User = t.struct({
     username: t.String,
     password: t.String,
@@ -26,7 +31,7 @@ const User = t.struct({
     lastName: t.maybe(t.String),
     phoneNumber: t.maybe(t.Number),
 
-    email: t.String,
+    email: Email,
     terms: t.Boolean,
 });
 

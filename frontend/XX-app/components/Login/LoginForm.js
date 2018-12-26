@@ -40,10 +40,10 @@ class LoginForm extends Component {
           this.setState({userData: responseJson});
 
           // toast sie za nic nie chce pokazac
-          this.refs.toast.showCenter('Logged in!');
+          this.refs.toast.show('Logged in!');
 
         }).catch(err => {
-          this.refs.toast.showCenter('Error :(');
+          this.refs.toast.show('Error :(');
         });
       }
     };
