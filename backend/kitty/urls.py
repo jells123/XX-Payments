@@ -10,6 +10,7 @@ router.register(r'profiles', views.ProfileViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'contacts', views.ContactViewSet)
 router.register(r'transactions', views.TransactionViewSet)
+router.register(r'user-events', views.UserEventViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from .models import Kitty, Transaction
 from .models import Profile, Contact
+from .models import UserEvent
 
 from django.contrib.auth import authenticate
 
@@ -68,7 +69,16 @@ class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     kitty = serializers.HyperlinkedRelatedField(many=False, view_name='kitty-detail', queryset=Kitty.objects.all())
     participant = serializers.HyperlinkedRelatedField(many=False, view_name='user-detail', queryset=User.objects.all())
+#
 
-    class Meta:
+    class Meta: 
         model = Transaction
         fields = '__all__'
+
+class UserEventSerializer(serializers.HyperlinkedModelSerializer):
+    date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S', read_only=True)
+
+    class Meta:
+        model = UserEvent
+        fields = ('id', 'user', 'event_type', 'date')
+        read_only_fields = ('date',)
