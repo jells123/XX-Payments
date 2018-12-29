@@ -27,8 +27,8 @@ const User = t.struct({
     username: t.String,
     password: t.String,
 
-    firstName: t.maybe(t.String),
-    lastName: t.maybe(t.String),
+    firstName: t.String,
+    lastName: t.String,
     phoneNumber: t.maybe(t.Number),
 
     email: Email,
@@ -76,7 +76,7 @@ class RegisterForm extends Component {
           return;
         }
 
-        fetch('http://192.168.1.5:8000/users/', {
+        fetch('http://192.168.100.50:8000/users/', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
