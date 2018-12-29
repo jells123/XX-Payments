@@ -23,7 +23,7 @@ class LoginForm extends Component {
       var passIn = this.state.passwordInput;
 
       if(userIn && passIn) {
-        fetch('http://192.168.1.5:8000/login/', {
+        fetch('http://192.168.100.50:8000/login/', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
