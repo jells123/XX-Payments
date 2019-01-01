@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { ScrollView, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast, {DURATION} from 'react-native-easy-toast';
@@ -27,11 +27,11 @@ const User = t.struct({
     username: t.String,
     password: t.String,
 
-    firstName: t.String,
-    lastName: t.String,
+    firstName: t.maybe(t.String),
+    lastName: t.maybe(t.String),
     phoneNumber: t.maybe(t.Number),
 
-    email: Email,
+    email: t.maybe(Email),
     terms: t.Boolean,
 });
 
@@ -70,13 +70,20 @@ class RegisterForm extends Component {
     _onButtonPress = () => {
       var data = this.refs.form.getValue();
 
-      if(data) {
-        if(!data.terms) {
-          this.refs.toast.show('You have to accept terms first');
+      if (data) {
+
+        if (!data.username || !data.password) {
+          this.refs.toast.show('Please enter username and password');
           return;
         }
 
-        fetch('http://192.168.100.50:8000/users/', {
+        if (!data.terms) {
+          this.refs.toast.show('You have to accept terms!');
+          return;
+        } 
+
+        let requestUri = `http://${global.ipAddress}:8000/users/`;
+        fetch(requestUri, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -85,16 +92,19 @@ class RegisterForm extends Component {
           body: JSON.stringify({
             username: data.username,
             password: data.password
+
           }),
 
-        }).then((response) => response.json())
+        })
+        .then((response) => response.json())
         .then((responseJson) => {
           console.log(responseJson.id);
           //this.props.navigation.navigate('Login');
           this.refs.toast.show('Success! You can now log in', DURATION.LENGTH_LONG);
           this._clearForm();
-
-        }).catch(err => {
+        })
+        .catch(err => {
+          console.log(err);
           this.refs.toast.show('Error :(');
         });
       }
@@ -124,9 +134,12 @@ class RegisterForm extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
         flex: 1,
-        marginBottom: 20
+        marginBottom: 20,
+
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginTop: 20
        },
 });
 

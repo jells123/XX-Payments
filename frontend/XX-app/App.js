@@ -19,6 +19,18 @@ export default class App extends React.Component {
         />
       );
     } else {
+      
+      let initialUri = this.props.exp.initialUri;
+      let ipRegex = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
+      let match = ipRegex.exec(initialUri);
+
+      if (match != null) {
+        global.ipAddress = match[0];
+      }
+      else {
+        console.log(`ERROR: Could not determine initial uri! (${initialUri})`);
+      }
+
       return (
         <View style={styles.container}>
           {Platform.OS === 'ios' && <StatusBar barStyle="default" />}

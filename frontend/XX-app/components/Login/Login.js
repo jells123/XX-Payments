@@ -11,13 +11,12 @@ class Login extends Component {
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={GlobalStyles.container}>
-
-        <View style={styles.loginContainer}>
-            <Image resizeMode="contain" style={styles.logo} source={require('../../assets/images/watermelon.gif')} />
-            <Image resizeMode="contain" style={styles.logo} source={require('../../assets/images/dumpling.gif')} />
+    
+        <View style={styles.imageContainer}>
+          <Image resizeMode="contain" source={require('../../assets/images/watermelon.gif')} />
         </View>
 
-        <View style={styles.formContainer}>
+        <View style={styles.loginContainer}>
           <LoginForm/>
         </View>
 
@@ -29,17 +28,16 @@ class Login extends Component {
 // define your styles
 const styles = StyleSheet.create({
   loginContainer:{
-      alignItems: 'center',
       flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center'
+      flexDirection: 'column',
+      justifyContent: 'center',
   },
-  logo: {
-      //position: 'absolute',
-      width: 100,
-      //height: 100,
-      flex :1
-  }
+  imageContainer:{
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
 });
 
 //make this component available to the app

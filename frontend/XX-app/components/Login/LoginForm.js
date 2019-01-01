@@ -22,8 +22,10 @@ class LoginForm extends Component {
       var userIn = this.state.usernameInput;
       var passIn = this.state.passwordInput;
 
-      if(userIn && passIn) {
-        fetch('http://192.168.100.50:8000/login/', {
+      if (userIn && passIn) {
+
+        let requestUri = `http://${global.ipAddress}:8000/login/`;
+        fetch(requestUri, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -34,25 +36,33 @@ class LoginForm extends Component {
             password: passIn
           }),
 
-        }).then((response) => response.json())
+        })
+        .then((response) => { 
+          // console.log(response.status);
+          return response.json();
+        })
         .then((responseJson) => {
           console.log(responseJson);
-          this.setState({userData: responseJson});
-
-          // toast sie za nic nie chce pokazac
-          this.refs.toast.show('Logged in!');
-
+          if (responseJson.user) 
+          {
+            this.refs.toast.show('You have logged in!', DURATION.LENGTH_LONG);
+            this.setState({userData: responseJson});
+            this.props.navigation.navigate('Home');
+          }
+          else if (responseJson.non_field_errors)
+          {
+            this.refs.toast.show(responseJson.non_field_errors, DURATION.LENGTH_LONG);
+          }
         }).catch(err => {
-          this.refs.toast.show('Error :(');
+          console.log(err); 
+          this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
         });
       }
     };
-
+    
     render() {
-        return (
-            <View style={styles.container}>
-
-                <Toast ref="toast"/>
+      return (
+        <View style={styles.container}>
 
                <TextInput style = {GlobalStyles.input}
                     autoCapitalize="none"
@@ -83,8 +93,8 @@ class LoginForm extends Component {
                 <TouchableOpacity style={GlobalStyles.buttonContainer}
                                     onPress={this._onButtonPress}>
                             <Text  style={GlobalStyles.buttonText}>LOGIN</Text>
-                </TouchableOpacity>
-
+               </TouchableOpacity>
+              <Toast ref="toast" position={'top'}/>
             </View>
         );
     }
@@ -93,7 +103,7 @@ class LoginForm extends Component {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        // ...GlobalStyles.container,
+        flex: 1,
         padding: 20,
        },
        registerText:{
