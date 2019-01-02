@@ -80,9 +80,9 @@ class RegisterForm extends Component {
         if (!data.terms) {
           this.refs.toast.show('You have to accept terms!');
           return;
-        } 
+        }
 
-        let requestUri = `http://${global.ipAddress}:8000/users/`;
+        let requestUri = `http://${global.ipAddress}:8000/register/`;
         fetch(requestUri, {
           method: 'POST',
           headers: {

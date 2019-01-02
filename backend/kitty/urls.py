@@ -18,10 +18,6 @@ router.register(r'user-events', views.UserEventViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.LoginAPI.as_view()),
-    path('auth/register/',
-        CreateUserAPIView.as_view(),
-        name='auth_user_create'),
-    path('auth/logout/',
-        LogoutUserAPIView.as_view(),
-        name='auth_user_logout')
+    path('register/', CreateUserAPIView.as_view()),
+    path('logout/', LogoutUserAPIView.as_view())
 ]

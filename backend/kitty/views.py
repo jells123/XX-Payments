@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import status
 
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsOwner
 from .serializers import KittySerializer, TransactionSerializer
 from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer, ContactSerializer, UserEventSerializer
 from rest_framework.decorators import action
@@ -44,6 +44,7 @@ class CreateUserAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
         # We create a token than will be used for future auth
         token = Token.objects.create(user=serializer.instance)
         token_data = {"token": token.key}
@@ -58,7 +59,6 @@ class LogoutUserAPIView(APIView):
     queryset = User.objects.all()
 
     def get(self, request, format=None):
-        # simply delete the token to force a login
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
 
@@ -81,8 +81,7 @@ class ContactViewSet(viewsets.ModelViewSet):
 class KittyViewSet(viewsets.ModelViewSet):
     queryset = Kitty.objects.all()
     serializer_class = KittySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,)
+    permission_classes = (IsOwner,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
