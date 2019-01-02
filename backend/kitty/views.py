@@ -5,6 +5,7 @@ from rest_framework import generics, permissions, renderers, viewsets
 from rest_framework.decorators import api_view, detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import status
 
 from .permissions import IsOwnerOrReadOnly
 from .serializers import KittySerializer, TransactionSerializer
@@ -12,6 +13,7 @@ from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer,
 from rest_framework.decorators import action
 
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 class LoginAPI(generics.GenericAPIView):
     serializer_class = LoginUserSerializer
@@ -34,7 +36,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class CreateUserAPIView(generics.CreateAPIView):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
