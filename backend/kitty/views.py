@@ -14,22 +14,27 @@ from rest_framework.decorators import action
 
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 
-class LoginAPI(generics.GenericAPIView):
-    serializer_class = LoginUserSerializer
-    permission_classes = [permissions.AllowAny]
+class LoginAPI(ObtainAuthToken):
+    #serializer_class = LoginUserSerializer
+    #permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
+        user = serializer.validated_data['user']
 
         # add this LOG IN event to event-log-table
         login_event = UserEvent.objects.create(user=user, event_type=UserEvent.LOGIN)
 
+        token, created = Token.objects.get_or_create(user=user)
+
         return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data
+            'token': token.key,
+            "user": UserSerializer(user, context=serializer.context).data
         })
+
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
