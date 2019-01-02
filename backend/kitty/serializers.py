@@ -49,7 +49,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         #fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name', 'email', 'kitties', 'profile', 'transactions')
         fields = ('url', 'id', 'username', 'password', 'kitties', 'profile', 'transactions')
-        extra_kwargs = {'password': {'write_only': True}}
+        write_only_fields = ('password')
+        read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
 
 class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
