@@ -61,13 +61,13 @@ class Transaction(models.Model):
     OPEN = 'OP'
     CLOSED = 'CL'
 
-    KITTY_STATE_CHOICES = (
+    TRANSACTION_STATE_CHOICES = (
         (OPEN, 'Open'),
         (CLOSED, 'Closed'),
     )
     state = models.CharField(
         max_length=2,
-        choices=KITTY_STATE_CHOICES,
+        choices=TRANSACTION_STATE_CHOICES,
         default=OPEN,
     )
 
@@ -93,12 +93,11 @@ class UserEvent(models.Model):
     )
 
     event_type = models.CharField(
-        max_length=2, 
+        max_length=2,
         choices=EVENT_CHOICES
-    ) 
+    )
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.date} : {self.user.username} : {dict(self.EVENT_CHOICES)[self.event_type]}'
-   
