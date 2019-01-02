@@ -1,26 +1,73 @@
 from django.contrib.auth.models import User
+from .models import Profile, Contact, Kitty, Transaction, UserEvent
+
 from rest_framework import generics, permissions, renderers, viewsets
 from rest_framework.decorators import api_view, detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import status
 
-from .models import Kitty, Transaction
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsOwner
 from .serializers import KittySerializer, TransactionSerializer
-from .models import Profile, Contact
-from .serializers import ProfileSerializer, UserSerializer, ContactSerializer
+from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer, ContactSerializer, UserEventSerializer
 from rest_framework.decorators import action
+
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+
+class LoginAPI(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        # add this LOG IN event to event-log-table
+        login_event = UserEvent.objects.create(user=user, event_type=UserEvent.LOGIN)
+
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            "user": UserSerializer(user, context=serializer.context).data
+        })
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
+class CreateUserAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        # We create a token than will be used for future auth
+        token = Token.objects.create(user=serializer.instance)
+        token_data = {"token": token.key}
+        return Response(
+            {**serializer.data, **token_data},
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
+
+class LogoutUserAPIView(APIView):
+    queryset = User.objects.all()
+
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
 
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
@@ -37,14 +84,15 @@ class ContactViewSet(viewsets.ModelViewSet):
 class KittyViewSet(viewsets.ModelViewSet):
     queryset = Kitty.objects.all()
     serializer_class = KittySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,)
+    permission_classes = (IsOwner,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-
-
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+class UserEventViewSet(viewsets.ModelViewSet):
+    queryset = UserEvent.objects.all()
+    serializer_class = UserEventSerializer

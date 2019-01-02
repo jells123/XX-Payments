@@ -3,6 +3,9 @@ from rest_framework import serializers
 
 from .models import Kitty, Transaction
 from .models import Profile, Contact
+from .models import UserEvent
+
+from django.contrib.auth import authenticate
 
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,13 +35,37 @@ class KittySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = ProfileSerializer(many=False, read_only=True)
-    kitties = serializers.HyperlinkedRelatedField(many=True, view_name='kitty-detail', read_only=True)
-    transactions = serializers.HyperlinkedRelatedField(many=True, view_name='transaction-detail', read_only=True)
+    profile = ProfileSerializer(many=False, read_only=True, required=False)
+    kitties = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='kitty-detail', required=False)
+    transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-detail', required=False)
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'first_name', 'last_name', 'kitties', 'profile', 'transactions')
+        #fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name', 'email', 'kitties', 'profile', 'transactions')
+        fields = ('url', 'id', 'username', 'password', 'kitties', 'profile', 'transactions')
+        write_only_fields = ('password')
+        read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
+
+
+class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Unable to log in with provided credentials.")
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
@@ -48,3 +75,11 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
         fields = '__all__'
+
+class UserEventSerializer(serializers.HyperlinkedModelSerializer):
+    date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S', read_only=True)
+
+    class Meta:
+        model = UserEvent
+        fields = ('id', 'user', 'event_type', 'date')
+        read_only_fields = ('date',)

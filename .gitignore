@@ -2,3 +2,4 @@ backend/*/__pycache__/
 backend/*/migrations/__pycache__/
 frontend/mobile-app/node_modules/*
 postgres-data/*
+*__pycache__*
