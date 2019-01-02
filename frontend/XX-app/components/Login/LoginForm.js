@@ -5,6 +5,7 @@ import { withNavigation } from 'react-navigation';
 
 import GlobalStyles from '../../constants/Style';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import axios from 'axios';
 
 // create a component
 class LoginForm extends Component {
@@ -37,16 +38,20 @@ class LoginForm extends Component {
           }),
 
         })
-        .then((response) => { 
+        .then((response) => {
           // console.log(response.status);
           return response.json();
         })
         .then((responseJson) => {
-          console.log(responseJson);
-          if (responseJson.user) 
+          //console.log(responseJson);
+          if (responseJson.user && responseJson.token)
           {
             this.refs.toast.show('You have logged in!', DURATION.LENGTH_LONG);
             this.setState({userData: responseJson});
+
+            // We set the returned token as the default authorization header
+            axios.defaults.headers.common.Authorization = `Token ${responseJson.token}`;
+            console.log(responseJson.token);
             this.props.navigation.navigate('Home');
           }
           else if (responseJson.non_field_errors)
@@ -54,12 +59,12 @@ class LoginForm extends Component {
             this.refs.toast.show(responseJson.non_field_errors, DURATION.LENGTH_LONG);
           }
         }).catch(err => {
-          console.log(err); 
+          console.log(err);
           this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
         });
       }
     };
-    
+
     render() {
       return (
         <View style={styles.container}>
