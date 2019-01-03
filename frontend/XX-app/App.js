@@ -9,6 +9,7 @@ export default class App extends React.Component {
     isLoggedIn: false
   };
 
+
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -32,10 +33,14 @@ export default class App extends React.Component {
       }
 
       return (
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <AppNavigator />
+        <View style={{flex: 1}}> 
+          <StatusBar translucent backgroundColor="rgba(0,0,0,0.2)"/>
+            <View style={styles.container}>
+            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+            <AppNavigator />
+          </View>
         </View>
+        
       );
     }
   }
