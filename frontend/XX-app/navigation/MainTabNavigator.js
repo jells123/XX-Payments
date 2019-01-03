@@ -80,14 +80,14 @@ LoginStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
+  Home: {
+    screen: HomeStack
+  },
   Login: {
     screen: LoginStack,
     navigationOptions: {
       tabBarVisible: false
     }
-  },
-  Home: {
-    screen: HomeStack
   },
   Links: {
     screen: LinksStack

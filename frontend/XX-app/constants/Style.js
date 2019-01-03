@@ -13,7 +13,7 @@ export default GlobalStyles = {
         color: '#fff'
     },
     buttonContainer: {
-        backgroundColor: '#269900',
+        backgroundColor: '#4d4dff',
         paddingVertical: 15,
         opacity: 0.8,
         marginBottom: 20
@@ -23,4 +23,8 @@ export default GlobalStyles = {
         textAlign: 'center',
         fontWeight: '700'
     },
+    commonText: {
+        color: '#fff',
+        textAlign: 'center'
+    }
 }

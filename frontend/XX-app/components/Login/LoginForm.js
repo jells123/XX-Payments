@@ -23,6 +23,9 @@ class LoginForm extends Component {
       var userIn = this.state.usernameInput;
       var passIn = this.state.passwordInput;
 
+      // TEMPORARILY!
+      this.props.navigation.navigate('Home');
+
       if (userIn && passIn) {
 
         let requestUri = `http://${global.ipAddress}:8000/login/`;
