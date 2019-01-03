@@ -23,15 +23,44 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         model = Profile
         fields = ('url', 'id', 'phone_number', 'contacts')
 
+class KittyParticipantSerializer(serializers.ModelSerializer):
+    username = serializers.SlugRelatedField(many=False, source='participant', slug_field="username", queryset=User.objects.all())
+
+    class Meta:
+        model = Transaction
+        fields = ("username", "amount")
 
 class KittySerializer(serializers.HyperlinkedModelSerializer):
     created = serializers.DateTimeField(read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
-    transactions = serializers.SlugRelatedField(many=True, read_only=True, slug_field='amount')
+    participants = KittyParticipantSerializer(many=True, source='transactions')
+
+    # participants = serializers.SlugRelatedField(many=True, source='transactions', read_only=True, slug_field='amount')
 
     class Meta:
         model = Kitty
-        fields = ('url', 'id', 'amount', 'created', 'owner', 'transactions')
+        fields = ('amount', 'created', 'owner', 'participants')
+
+    def create(self, validated_data):
+
+        # 'participants' in request (response) -> 'transactions' in models
+        participants_data = validated_data.pop('transactions')
+        kitty = Kitty.objects.create(**validated_data)
+
+        new_transactions = []
+        transactions_sum = 0
+        for p in participants_data:
+            transaction = Transaction(kitty=kitty, amount=p['amount'], participant=p['participant'])
+            transactions_sum += transaction.amount
+            new_transactions.append(transaction)
+
+        if kitty.amount == transactions_sum:
+            Transaction.objects.bulk_create(new_transactions)
+            print("Created transactions!")
+        else:
+            raise serializers.ValidationError("Kitties' amounts don't match")
+
+        return kitty
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -74,7 +103,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = '__all__'
+        fields = ("kitty", "participant", "amount", "state")
 
 class UserEventSerializer(serializers.HyperlinkedModelSerializer):
     date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S', read_only=True)

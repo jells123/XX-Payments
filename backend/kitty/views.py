@@ -16,6 +16,8 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 
+from rest_framework import serializers
+
 class LoginAPI(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -57,7 +59,6 @@ class CreateUserAPIView(generics.CreateAPIView):
             headers=headers
         )
 
-
 class LogoutUserAPIView(APIView):
     queryset = User.objects.all()
 
@@ -80,15 +81,36 @@ class ContactViewSet(viewsets.ModelViewSet):
         second_contact.save()
         serializer.save()
 
-
 class KittyViewSet(viewsets.ModelViewSet):
     queryset = Kitty.objects.all()
     serializer_class = KittySerializer
-    permission_classes = (IsOwner,)
+    # permission_classes = (IsOwner,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)        
+            self.perform_create(serializer)
+
+            headers = self.get_success_headers(serializer.data)
+
+        except serializers.ValidationError as ve:
+            print(ve)
+            return Response(
+                {"error_message" : ve.detail},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+    
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
