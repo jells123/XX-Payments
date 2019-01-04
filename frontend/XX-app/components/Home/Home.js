@@ -35,6 +35,9 @@ class Home extends Component {
       })
       .then((responseJson) => {
         console.log(responseJson);
+        this.props.navigation.navigate('Collect', {
+          activeUsers: responseJson
+        });
       }).catch(err => {
         console.log(err);
       });

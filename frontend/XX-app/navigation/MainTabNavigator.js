@@ -8,10 +8,21 @@ import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import CollectScreen from '../screens/CollectScreen';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
+const HomeStack = createStackNavigator(
+  {
+    Home: {
+      screen: HomeScreen
+    },
+    Collect: {
+      screen: CollectScreen,
+    }
+  },
+  {
+    initialRouteName: "Home"
+  }
+);
 
 HomeStack.navigationOptions = {
   tabBarLabel: 'Home',
