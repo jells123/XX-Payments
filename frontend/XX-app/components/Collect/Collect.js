@@ -5,21 +5,17 @@ import { MonoText } from '../../components/StyledText';
 import GlobalStyles from '../../constants/Style';
 
 class Collect extends Component {
+
   render() {
+    const { navigation } = this.props;
+    const activeUsers = navigation.getParam("activeUsers");
+
     return (
       <View style={styles.container}>
         <FlatList
-          data={[
-            {key: 'Devin'},
-            {key: 'Jackson'},
-            {key: 'James'},
-            {key: 'Joel'},
-            {key: 'John'},
-            {key: 'Jillian'},
-            {key: 'Jimmy'},
-            {key: 'Julie'},
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+          data={activeUsers}
+          renderItem={({item}) => <Text style={styles.item}>{item.username}</Text>}
+          keyExtractor={(item) => item.id.toString()}
         />
       </View>
     );

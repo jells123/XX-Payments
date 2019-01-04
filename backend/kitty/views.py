@@ -38,8 +38,8 @@ class LoginAPI(ObtainAuthToken):
 
 
 class ActiveUsersViewSet(viewsets.ReadOnlyModelViewSet):
-    now = datetime.datetime.now() + datetime.timedelta(minutes = 5)
-    # jest jakis dziwny poslizg drobny, trzeba dodac 5 min zeby miec pewnosc ze od razu po zalogowaniu sie ktos pojawi
+    now = datetime.datetime.now() + datetime.timedelta(minutes = 10)
+    # jest jakis dziwny poslizg drobny, trzeba dodac 10 min zeby miec pewnosc ze od razu po zalogowaniu sie ktos pojawi
     now_minus_10 = datetime.datetime.now() - datetime.timedelta(minutes = 10)
     active_users_ids = UserEvent.objects.filter(date__range=[now_minus_10, now]).values_list('user', flat=True)
     queryset = User.objects.filter(pk__in=active_users_ids)
