@@ -82,6 +82,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
 
+class ActiveUserSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('url', 'id', 'username', 'first_name', 'last_name')
+
+
 class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
     username = serializers.CharField()
     password = serializers.CharField()

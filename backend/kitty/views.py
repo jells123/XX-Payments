@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from .permissions import IsOwnerOrReadOnly, IsOwner
-from .serializers import KittySerializer, TransactionSerializer
+from .serializers import KittySerializer, TransactionSerializer, ActiveUserSerializer
 from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer, ContactSerializer, UserEventSerializer
 from rest_framework.decorators import action
 
@@ -17,6 +17,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from rest_framework import serializers
+import datetime
 
 class LoginAPI(ObtainAuthToken):
 
@@ -34,6 +35,15 @@ class LoginAPI(ObtainAuthToken):
             'token': token.key,
             "user": UserSerializer(user, context=serializer.context).data
         })
+
+
+class ActiveUsersAPIView(viewsets.ReadOnlyModelViewSet):
+    now = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+    # jest jakis dziwny poslizg drobny, trzeba dodac 5 min zeby miec pewnosc ze od razu po zalogowaniu sie ktos pojawi
+    now_minus_10 = datetime.datetime.now() - datetime.timedelta(minutes = 10)
+    active_users_ids = UserEvent.objects.filter(date__range=[now_minus_10, now]).values_list('user', flat=True)
+    queryset = User.objects.filter(pk__in=active_users_ids)
+    serializer_class = ActiveUserSerializer
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -84,7 +94,7 @@ class ContactViewSet(viewsets.ModelViewSet):
 class KittyViewSet(viewsets.ModelViewSet):
     queryset = Kitty.objects.all()
     serializer_class = KittySerializer
-    # permission_classes = (IsOwner,)
+    permission_classes = (IsOwner,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -93,7 +103,7 @@ class KittyViewSet(viewsets.ModelViewSet):
 
         try:
             serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)        
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
             headers = self.get_success_headers(serializer.data)
@@ -110,7 +120,7 @@ class KittyViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-    
+
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
