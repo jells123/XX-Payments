@@ -121,7 +121,7 @@ class TransactionForParticipantSerializer(serializers.HyperlinkedModelSerializer
 
     class Meta:
         model = Transaction
-        fields = '__all__'
+        fields = ("id", "url", "kitty_owner", "kitty", "participant", "amount", "state")
 
 
 class UserEventSerializer(serializers.HyperlinkedModelSerializer):

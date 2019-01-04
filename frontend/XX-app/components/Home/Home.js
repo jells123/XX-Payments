@@ -49,6 +49,35 @@ class Home extends Component {
       });
   };
 
+  _onButtonJoinPress = () => {
+      let requestUri = `http://${global.ipAddress}:8000/transactions/`;
+      fetch(requestUri, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${global.token}`,
+        },
+
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseJson) => {
+        console.log(responseJson);
+        if (responseJson.detail) {
+          this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+        } else {
+          this.props.navigation.navigate('Join', {
+            kittyInvitations: responseJson
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+      });
+  };
+
   render() {
 
     let actionButtonSize = Math.min((styles.ex.width - 4*styles.actionButton.margin) / 2, 170);
@@ -81,7 +110,7 @@ class Home extends Component {
                             <Text style={GlobalStyles.buttonText}>$ Collect $</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}}
-                    onPress={null}>
+                    onPress={this._onButtonJoinPress}>
                             <Text style={GlobalStyles.buttonText}>$ Join $</Text>
                 </TouchableOpacity>
             </View>
