@@ -112,6 +112,17 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
         model = Transaction
         fields = ("kitty", "participant", "amount", "state")
 
+
+class TransactionForParticipantSerializer(serializers.HyperlinkedModelSerializer):
+    kitty = serializers.HyperlinkedRelatedField(many=False, read_only=True, view_name='kitty-detail')
+    participant = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    amount = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+
+
 class UserEventSerializer(serializers.HyperlinkedModelSerializer):
     date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S', read_only=True)
 

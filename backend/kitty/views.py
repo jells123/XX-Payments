@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from .permissions import IsOwnerOrReadOnly, IsOwner
-from .serializers import KittySerializer, TransactionSerializer, ActiveUserSerializer
+from .serializers import KittySerializer, TransactionSerializer, ActiveUserSerializer, TransactionForParticipantSerializer
 from .serializers import ProfileSerializer, UserSerializer, LoginUserSerializer, ContactSerializer, UserEventSerializer
 from rest_framework.decorators import action
 
@@ -128,7 +128,10 @@ class KittyViewSet(viewsets.ModelViewSet):
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
+    serializer_class = TransactionForParticipantSerializer
+
+    def get_queryset(self):
+        return Transaction.objects.filter(participant=self.request.user.id)
 
 class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()
