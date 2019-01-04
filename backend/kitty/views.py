@@ -37,7 +37,7 @@ class LoginAPI(ObtainAuthToken):
         })
 
 
-class ActiveUsersAPIView(viewsets.ReadOnlyModelViewSet):
+class ActiveUsersViewSet(viewsets.ReadOnlyModelViewSet):
     now = datetime.datetime.now() + datetime.timedelta(minutes = 5)
     # jest jakis dziwny poslizg drobny, trzeba dodac 5 min zeby miec pewnosc ze od razu po zalogowaniu sie ktos pojawi
     now_minus_10 = datetime.datetime.now() - datetime.timedelta(minutes = 10)
