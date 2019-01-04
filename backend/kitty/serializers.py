@@ -50,7 +50,7 @@ class KittySerializer(serializers.HyperlinkedModelSerializer):
         new_transactions = []
         transactions_sum = 0
         for p in participants_data:
-            transaction = Transaction(kitty=kitty, amount=p['amount'], participant=p['participant'])
+            transaction = Transaction(kitty=kitty, amount=p['amount'], participant=p['participant'], kitty_owner=kitty.owner)
             transactions_sum += transaction.amount
             new_transactions.append(transaction)
 
@@ -117,6 +117,7 @@ class TransactionForParticipantSerializer(serializers.HyperlinkedModelSerializer
     kitty = serializers.HyperlinkedRelatedField(many=False, read_only=True, view_name='kitty-detail')
     participant = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     amount = serializers.ReadOnlyField()
+    kitty_owner = serializers.ReadOnlyField(source='kitty_owner.username')
 
     class Meta:
         model = Transaction
