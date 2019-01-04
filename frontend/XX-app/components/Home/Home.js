@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import { StatusBar } from 'react-native';
-
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 // create a component
 class Home extends Component {
@@ -27,6 +27,7 @@ class Home extends Component {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Authorization': `Token ${global.token}`,
         },
 
       })
@@ -35,11 +36,16 @@ class Home extends Component {
       })
       .then((responseJson) => {
         console.log(responseJson);
-        this.props.navigation.navigate('Collect', {
-          activeUsers: responseJson
-        });
+        if (responseJson.detail) {
+          this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+        } else {
+          this.props.navigation.navigate('Collect', {
+            activeUsers: responseJson
+          });
+        }
       }).catch(err => {
         console.log(err);
+        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
       });
   };
 
@@ -101,6 +107,7 @@ class Home extends Component {
             </View>
 
             {/* </ScrollView> */}
+            <Toast ref="toast" position={'top'}/>
         </ScrollView>
     );
   }

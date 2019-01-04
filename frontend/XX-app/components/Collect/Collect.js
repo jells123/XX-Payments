@@ -11,7 +11,7 @@ class Collect extends Component {
     const activeUsers = navigation.getParam("activeUsers");
 
     return (
-      <View style={styles.container}>
+      <View style={GlobalStyles.container}>
         <FlatList
           data={activeUsers}
           renderItem={({item}) => <Text style={styles.item}>{item.username}</Text>}
@@ -23,14 +23,11 @@ class Collect extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
   item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
+      ...GlobalStyles.commonText,
+      padding: 10,
+      fontSize: 18,
+      height: 44,
   },
 })
 

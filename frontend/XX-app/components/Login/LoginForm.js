@@ -47,7 +47,8 @@ class LoginForm extends Component {
             this.refs.toast.show('You have logged in!', DURATION.LENGTH_LONG);
 
             // We set the returned token as the default authorization header
-            axios.defaults.headers.common.Authorization = `Token ${responseJson.token}`;
+            //axios.defaults.headers.common.Authorization = `Token ${responseJson.token}`;
+            global.token = responseJson.token;      // niestety to axios nie dziala, nie wiem czemu, poki co tak dziala
 
             console.log(responseJson.token);
             if (responseJson.user.username && responseJson.user.id) {
