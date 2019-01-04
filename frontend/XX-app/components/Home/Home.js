@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  StyleSheet, 
+  StyleSheet,
   Platform
 } from 'react-native';
 
@@ -19,38 +19,59 @@ import { StatusBar } from 'react-native';
 
 // create a component
 class Home extends Component {
+
+  _onButtonCollectPress = () => {
+      let requestUri = `http://${global.ipAddress}:8000/users-active/`;
+      fetch(requestUri, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseJson) => {
+        console.log(responseJson);
+      }).catch(err => {
+        console.log(err);
+      });
+  };
+
   render() {
 
     let actionButtonSize = Math.min((styles.ex.width - 4*styles.actionButton.margin) / 2, 170);
-    
+
     const { navigation } = this.props;
     const username = navigation.getParam("username", "...");
     const userId = navigation.getParam("userId", -1);
- 
+
     return (
         <ScrollView style={GlobalStyles.container}
             contentContainerStyle={styles.mainContainer}
         >
             <StatusBar hidden />
-            {/* <ScrollView style={GlobalStyles.container} 
+            {/* <ScrollView style={GlobalStyles.container}
                 contentContainerStyle={styles.mainContainer}
             > */}
 
-            <View style={styles.settingsContainer}> 
+            <View style={styles.settingsContainer}>
                 <Image style={{width:50, height:50}} source={require('../../assets/images/settings.png')} />
             </View>
 
             <View style={styles.welcomeContainer}>
                 <Text style={styles.helloText}>Hello, {username}!</Text>
-                <Text style={styles.whatToDoText}>What would you like to do?</Text>                
+                <Text style={styles.whatToDoText}>What would you like to do?</Text>
             </View>
-        
+
             <View style={styles.actionButtonsContainer}>
-                <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}} 
-                    onPress={null}>
+                <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}}
+                    onPress={this._onButtonCollectPress}>
                             <Text style={GlobalStyles.buttonText}>$ Collect $</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}} 
+                <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}}
                     onPress={null}>
                             <Text style={GlobalStyles.buttonText}>$ Join $</Text>
                 </TouchableOpacity>
