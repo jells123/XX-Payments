@@ -131,7 +131,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionForParticipantSerializer
 
     def get_queryset(self):
-        return Transaction.objects.filter(participant=self.request.user.id)
+        my_transactions = Transaction.objects.filter(participant=self.request.user.id)
+        return my_transactions.filter(state='OP')
 
 class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()

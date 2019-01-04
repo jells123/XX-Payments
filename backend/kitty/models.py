@@ -60,11 +60,13 @@ class Transaction(models.Model):
     participant = models.ForeignKey('auth.User', related_name='transactions', on_delete=models.CASCADE)
 
     OPEN = 'OP'
-    CLOSED = 'CL'
+    ACCEPTED = 'AC'
+    REJECTED = 'RJ'
 
     TRANSACTION_STATE_CHOICES = (
         (OPEN, 'Open'),
-        (CLOSED, 'Closed'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected')
     )
     state = models.CharField(
         max_length=2,
