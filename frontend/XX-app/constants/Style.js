@@ -10,18 +10,20 @@ export default GlobalStyles = {
         backgroundColor: 'rgba(225,225,225,0.2)',
         marginBottom: 10,
         padding: 10,
-        color: '#fff'
+        color: '#fff',
+        borderRadius: 4
     },
     buttonContainer: {
-        backgroundColor: '#4d4dff',
+        borderRadius: 4,
+        backgroundColor: '#1a75ff',
+        
         paddingVertical: 15,
-        opacity: 0.8,
         marginBottom: 20
     },
     buttonText: {
         color: '#fff',
         textAlign: 'center',
-        fontWeight: '700'
+        fontWeight: '700',
     },
     commonText: {
         color: '#fff',

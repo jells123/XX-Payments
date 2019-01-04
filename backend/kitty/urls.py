@@ -7,6 +7,7 @@ from .views import CreateUserAPIView, LogoutUserAPIView, ActiveUsersAPIView
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
+
 router.register(r'kitties', views.KittyViewSet)
 router.register(r'profiles', views.ProfileViewSet)
 router.register(r'users', views.UserViewSet)

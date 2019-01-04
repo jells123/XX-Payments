@@ -23,9 +23,6 @@ class LoginForm extends Component {
       var userIn = this.state.usernameInput;
       var passIn = this.state.passwordInput;
 
-      // TEMPORARILY!
-      this.props.navigation.navigate('Home');
-
       if (userIn && passIn) {
 
         let requestUri = `http://${global.ipAddress}:8000/login/`;
@@ -42,20 +39,23 @@ class LoginForm extends Component {
 
         })
         .then((response) => {
-          // console.log(response.status);
           return response.json();
         })
         .then((responseJson) => {
-          //console.log(responseJson);
           if (responseJson.user && responseJson.token)
           {
             this.refs.toast.show('You have logged in!', DURATION.LENGTH_LONG);
-            this.setState({userData: responseJson});
 
             // We set the returned token as the default authorization header
             axios.defaults.headers.common.Authorization = `Token ${responseJson.token}`;
+
             console.log(responseJson.token);
-            this.props.navigation.navigate('Home');
+            if (responseJson.user.username && responseJson.user.id) {
+              this.props.navigation.navigate('Home', {
+                username: responseJson.user.username,
+                userId: responseJson.user.id
+              });
+            }
           }
           else if (responseJson.non_field_errors)
           {
