@@ -13,8 +13,8 @@ class LoginForm extends Component {
       super(props);
 
       this.state = {
-        usernameInput: '',
-        passwordInput: '',
+        usernameInput: 'simpleuser',
+        passwordInput: 'simpleuser',
         userData: ''
       }
     }
@@ -79,7 +79,7 @@ class LoginForm extends Component {
                     ref={(input)=> this.usernameInput = input}
                     onChangeText={(usernameInput) => this.setState({usernameInput})}
                     value={this.state.usernameInput}
-                    //keyboardType='email-address'
+                    defaultValue="simpleuser"
                     returnKeyType="next"
                     placeholder='Username'
                     placeholderTextColor='rgba(225,225,225,0.7)'/>
@@ -90,6 +90,7 @@ class LoginForm extends Component {
                     onChangeText={(passwordInput) => this.setState({passwordInput})}
                     value={this.state.passwordInput}
                     placeholder='Password'
+                    defaultValue="simpleuser"
                     placeholderTextColor='rgba(225,225,225,0.7)'
                     secureTextEntry/>
 
