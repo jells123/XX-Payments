@@ -1,7 +1,11 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+
+import { createStackNavigator, createAppContainer } from "react-navigation";
 import AppNavigator from './navigation/AppNavigator';
+
+const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   state = {
@@ -37,7 +41,8 @@ export default class App extends React.Component {
           <StatusBar translucent backgroundColor="rgba(0,0,0,0.2)"/>
             <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            <AppNavigator />
+            <AppContainer />
+            {/* <AppNavigator /> */}
           </View>
         </View>
         

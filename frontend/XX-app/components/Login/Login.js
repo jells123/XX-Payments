@@ -10,7 +10,7 @@ import GlobalStyles from '../../constants/Style';
 class Login extends Component {
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding" style={GlobalStyles.container}>
+      <View behavior="padding" style={GlobalStyles.container}>
     
         <View style={styles.imageContainer}>
           <Image resizeMode="contain" source={require('../../assets/images/watermelon.gif')} />
@@ -20,7 +20,7 @@ class Login extends Component {
           <LoginForm/>
         </View>
 
-       </KeyboardAvoidingView>
+       </View>
     );
   }
 }

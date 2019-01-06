@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import GlobalStyles from '../../constants/Style';
@@ -50,7 +50,6 @@ class LoginForm extends Component {
             //axios.defaults.headers.common.Authorization = `Token ${responseJson.token}`;
             global.token = responseJson.token;      // niestety to axios nie dziala, nie wiem czemu, poki co tak dziala
 
-            console.log(responseJson.token);
             if (responseJson.user.username && responseJson.user.id) {
               this.props.navigation.navigate('Home', {
                 username: responseJson.user.username,
@@ -71,7 +70,7 @@ class LoginForm extends Component {
 
     render() {
       return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
 
                <TextInput style = {GlobalStyles.input}
                     autoCapitalize="none"
@@ -104,7 +103,7 @@ class LoginForm extends Component {
                             <Text  style={GlobalStyles.buttonText}>LOGIN</Text>
                </TouchableOpacity>
               <Toast ref="toast" position={'top'}/>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }

@@ -9,9 +9,9 @@ import GlobalStyles from '../../constants/Style';
 class Register extends Component {
     render() {
         return (
-            <KeyboardAvoidingView behavior="padding" style={GlobalStyles.container}>
+            <View behavior="padding" style={GlobalStyles.container}>
                 <RegisterForm/>
-            </KeyboardAvoidingView>
+            </View>
         );
     }
 }

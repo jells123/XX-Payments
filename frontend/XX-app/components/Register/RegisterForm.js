@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast, {DURATION} from 'react-native-easy-toast';
