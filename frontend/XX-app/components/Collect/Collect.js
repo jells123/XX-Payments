@@ -3,95 +3,11 @@ import { FlatList, TouchableOpacity, StyleSheet, Text, View, ScrollView, TextInp
 import { withNavigation } from 'react-navigation';
 import { RadioGroup } from 'react-native-btr';
 
-import { CheckBox } from 'react-native-elements';
 import GlobalStyles from '../../constants/Style';
+import { update } from 'tcomb';
 
-const BLUE = "#428AF8";
-const LIGHT_GRAY = "#D3D3D3";
-
-class KittyAmountInput extends Component {
-  // https://gist.github.com/mmazzarolo/77407406eea9a574c060662ab1bcac1f
-  state = {
-    isFocused: false,
-    amount: "0"
-  };
-
-  _handleFocus = event => {
-    this.setState({ isFocused: true });
-    if (this.props.onFocus) {
-      this.props.onFocus(event);
-    }
-  };
-
-  _handleBlur = event => {
-    this.setState({ isFocused: false });
-    if (this.props.onBlur) {
-      this.props.onBlur(event);
-    }
-  };
-
-  _handleTextChanged = (text) => {
-    this.setState({
-      amount: text.replace(/[^0-9.]/g, '')
-    }, () => {
-      this.props.handleKittyAmount(this.state.amount);
-    })
-  }
-
-  render() {
-    const { isFocused } = this.state;
-    return (
-      <TextInput style={styles.kittyInput}
-        keyboardType='numeric'
-        underlineColorAndroid={
-          isFocused ? BLUE : LIGHT_GRAY
-        }
-        onFocus={this._handleFocus}
-        onBlur={this._handleBlur}
-        value={this.state.amount}
-        onChangeText = {(text) => this._handleTextChanged(text)}
-      />
-    )
-  }
-}
-
-class UserEntry extends Component {
-  
-/*
-to implement: componentWillReceiveProps...
-*/
-
-  state = {
-    checked : false
-  }
-
-  _handleChecked = () => {
-    this.setState({
-      checked: !this.state.checked
-    }, () => {
-      this.props.handleCheck(this.props.title);
-    });
-  }
-
-  render() {
-    return (
-      <View style={styles.userEntryContainer}>
-        <CheckBox
-          title={this.props.title}
-          checked={this.state.checked}
-          onPress={() => this._handleChecked()}
-        />
-        <TextInput
-          underlineColorAndroid={ LIGHT_GRAY }
-          style={{
-            flex: 1
-          }}
-          value={this.props.userAmount}
-        />
-      </View>
-    );
-  }
-}
+import KittyAmountInput from './KittyAmountInput';
+import UserEntry from './UserEntry';
 
 class Collect extends Component {
 
@@ -103,7 +19,7 @@ class Collect extends Component {
       activeUsers.push({
         username: "user"+(i).toString(),
         id: i,
-        userAmount: "-"
+        userAmount: ""
       })
     }
 
@@ -122,9 +38,41 @@ class Collect extends Component {
           checked: false
         },
       ],
-      kittyAmount: 0,
-      activeUsers: activeUsers
+      kittyAmount: 0.0,
+      activeUsers: activeUsers,
+      refreshUsers: false
     };
+  }
+
+  countActiveUsers = () => {
+    let counter = 0;
+    for (var i = 0; i < this.state.activeUsers.length; i++) {
+      if (this.state.activeUsers[i].userAmount != "")
+        counter++;
+    }
+
+    return counter;
+  }
+
+  countEvenKittyPart = () => {
+    let count = this.countActiveUsers();
+    let kitty = this.state.kittyAmount;
+    return (kitty / parseFloat(count));
+  }
+
+  updateEvenKittyParts = (kittyPart) => {
+    let updatedActiveUsers = this.state.activeUsers;
+    for (var i = 0; i < updatedActiveUsers.length; i++) {
+      if (updatedActiveUsers[i].userAmount != "") {
+        updatedActiveUsers[i].userAmount = kittyPart;
+      }
+    }
+
+    var refresh = !this.state.refreshUsers;
+    this.setState({
+      activeUsers : updatedActiveUsers,
+      refreshUsers: refresh
+    });
   }
 
   _handleKittyAmount = (amount) => {
@@ -133,14 +81,26 @@ class Collect extends Component {
         kittyAmount: amount 
       },
       () => {
-        // console.log(this.state.kittyAmount);
+        let kittyPart = this.countEvenKittyPart().toFixed(2);
+        this.updateEvenKittyParts(kittyPart);
       }
     );
   }
 
-  _handleUserEntryCheck = (entryName) => {
-    console.log(entryName);
-    console.log(this.state.activeUsers[parseInt(entryName[entryName.length - 1])]);
+  _handleUserEntryCheck = (entryId) => {
+    
+    let updatedActiveUsers = this.state.activeUsers;
+
+    if (updatedActiveUsers[entryId].userAmount == "") {
+      // add new user to the kitty (checked)
+      updatedActiveUsers[entryId].userAmount = "!";
+    }
+    else {
+      // user removed from kitty (unchecked)
+      updatedActiveUsers[entryId].userAmount = "";
+    }
+    let kittyPart = this.countEvenKittyPart().toFixed(2);
+    this.updateEvenKittyParts(kittyPart);
   }
 
   onDivideOptionPress = data => this.setState({ data });
@@ -148,7 +108,6 @@ class Collect extends Component {
   render() {
     const { navigation } = this.props;
     // const activeUsers = navigation.getParam("activeUsers");
-
 
     return (
       <ScrollView 
@@ -187,11 +146,11 @@ class Collect extends Component {
           renderItem={
             ({item}) => 
             <UserEntry
-              title={item.username}
+              user={item}
               handleCheck={this._handleUserEntryCheck}
-              userAmount={item.userAmount}
             />
           }
+          extraData={this.state.refreshUsers}
           keyExtractor={
             (item) => item.id.toString()
           }
@@ -261,10 +220,6 @@ const styles = StyleSheet.create({
     ...GlobalStyles.buttonText,
     fontSize: 17
   },
-  userEntryContainer: {
-    flex:1, 
-    flexDirection: 'row'
-  }
 })
 
 export default withNavigation(Collect);
