@@ -58,17 +58,17 @@ class Join extends Component {
         <FlatList
           data={kittyInvitations}
           renderItem={({item}) =>
-            <View>
+            <View style={styles.invitationContainer}>
               <Text style={styles.item}>
                 You owe {item.kitty_owner} {item.amount}zł
               </Text>
                 <View style={styles.actionButtonsContainer}>
                 <TouchableOpacity style={{...styles.actionButton, backgroundColor: '#006400'}}
-                    onPress={this._onButtonPress(item, true)}>
+                    onPress={() => this._onButtonPress(item, true)}>
                             <Text style={GlobalStyles.buttonText}>Accept</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{...styles.actionButton, backgroundColor: '#FF0000'}}
-                    onPress={this._onButtonPress(item, false)}>
+                <TouchableOpacity style={{...styles.actionButton, backgroundColor: '#640000'}}
+                    onPress={() => this._onButtonPress(item, false)}>
                             <Text style={GlobalStyles.buttonText}>Reject</Text>
                 </TouchableOpacity>
               </View>
@@ -102,6 +102,16 @@ const styles = StyleSheet.create({
       flex: 0,
       flexDirection: 'row',
       justifyContent: 'space-between'
+  },
+  invitationContainer: {
+    flex: 0.3,
+    flexDirection: 'row',
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8425a3',
+    marginTop: 15,
+    marginBottom: 15
   },
 })
 
