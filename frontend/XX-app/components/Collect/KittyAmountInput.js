@@ -14,14 +14,14 @@ class KittyAmountInput extends Component {
     _handleFocus = event => {
         this.setState({ isFocused: true });
         if (this.props.onFocus) {
-        this.props.onFocus(event);
+            this.props.onFocus(event);
         }
     };
 
     _handleBlur = event => {
         this.setState({ isFocused: false });
         if (this.props.onBlur) {
-        this.props.onBlur(event);
+            this.props.onBlur(event);
         }
     };
 
@@ -29,15 +29,20 @@ class KittyAmountInput extends Component {
         // TODO: parseFloat returns NaN if failed!
         // - handle this
 
-        text = text.replace(/[^0-9.]/g, '');
-        let value = parseFloat(text);
-        // if value is NaN...
+        let clearText = text.replace(/[^0-9.]/g, '');
+        let value = parseFloat(clearText);
+        let amountString = "";
+
+        if (!(isNaN(value))) {
+            amountString = clearText;
+            // toFixed(2)?
+        }
 
         this.setState({
-            amount: value.toFixed(2)
+            amount: amountString
         }, () => {
         if (this.state.amount != "")
-            this.props.handleKittyAmount(parseFloat(this.state.amount));
+            this.props.handleKittyAmount(value);
         else
             this.props.handleKittyAmount(0.0);
         })

@@ -4,10 +4,14 @@ import { withNavigation } from 'react-navigation';
 import { RadioGroup } from 'react-native-btr';
 
 import GlobalStyles from '../../constants/Style';
-import { update } from 'tcomb';
 
 import KittyAmountInput from './KittyAmountInput';
 import UserEntry from './UserEntry';
+
+const DivideOptionEnum = {
+  EVEN: 1,
+  CUSTOM: 2
+}
 
 class Collect extends Component {
 
@@ -15,6 +19,9 @@ class Collect extends Component {
     super(props);
 
     var activeUsers = []
+
+    // generates dummy active users list...
+    /*
     for (var i = 0; i < 10; i++) {
       activeUsers.push({
         username: "user"+(i).toString(),
@@ -22,20 +29,19 @@ class Collect extends Component {
         userAmount: ""
       })
     }
+    */
 
     this.state =  {
       divideOptions: [
         {
-          label: "Divide evenly",
-          color: '#fff',
-          size: 5,
-          checked: true
+          label: "Divide evenly", color: '#fff',
+          size: 5, checked: true,
+          type: DivideOptionEnum.EVEN
         },
         { 
-          label: "Custom...",
-          color: '#fff', 
-          size: 5, 
-          checked: false
+          label: "Custom...", color: '#fff', 
+          size: 5, checked: false,
+          type: DivideOptionEnum.CUSTOM
         },
       ],
       kittyAmount: 0.0,
@@ -44,13 +50,21 @@ class Collect extends Component {
     };
   }
 
+  getCurrentDivideOption = () => {
+    let optionChosen = this.state.divideOptions.filter(
+      function(item) {
+        return item.checked == true;
+      }
+    )[0];
+    return optionChosen.type;
+  }
+
   countActiveUsers = () => {
     let counter = 0;
     for (var i = 0; i < this.state.activeUsers.length; i++) {
       if (this.state.activeUsers[i].userAmount != "")
         counter++;
     }
-
     return counter;
   }
 
@@ -81,8 +95,11 @@ class Collect extends Component {
         kittyAmount: amount 
       },
       () => {
-        let kittyPart = this.countEvenKittyPart().toFixed(2);
-        this.updateEvenKittyParts(kittyPart);
+        switch (this.getCurrentDivideOption()) {
+          case DivideOptionEnum.EVEN:
+            let kittyPart = this.countEvenKittyPart().toFixed(2);
+            this.updateEvenKittyParts(kittyPart);
+        }
       }
     );
   }
@@ -90,7 +107,6 @@ class Collect extends Component {
   _handleUserEntryCheck = (entryId) => {
     
     let updatedActiveUsers = this.state.activeUsers;
-
     if (updatedActiveUsers[entryId].userAmount == "") {
       // add new user to the kitty (checked)
       updatedActiveUsers[entryId].userAmount = "!";
@@ -99,15 +115,31 @@ class Collect extends Component {
       // user removed from kitty (unchecked)
       updatedActiveUsers[entryId].userAmount = "";
     }
-    let kittyPart = this.countEvenKittyPart().toFixed(2);
-    this.updateEvenKittyParts(kittyPart);
+    switch (this.getCurrentDivideOption()) {
+      case DivideOptionEnum.EVEN:
+        let kittyPart = this.countEvenKittyPart().toFixed(2);
+        this.updateEvenKittyParts(kittyPart);
+    }
   }
 
-  onDivideOptionPress = data => this.setState({ data });
+  onDivideOptionPress = (data) => {
+    console.log(this.getCurrentDivideOption());
+    this.setState({ data })
+  };
 
   render() {
+    
+    // receive active users from navigation props
     const { navigation } = this.props;
-    // const activeUsers = navigation.getParam("activeUsers");
+    let activeUsers = navigation.getParam("activeUsers", "");
+    if (activeUsers != "") {
+      for (var i = 0; i < activeUsers.length; i++) {
+        if (!("userAmount" in activeUsers[i])) {
+          activeUsers[i].userAmount = "";
+        }
+      }
+      this.state.activeUsers = activeUsers;
+    }
 
     return (
       <ScrollView 
@@ -144,10 +176,11 @@ class Collect extends Component {
         <FlatList
           data={this.state.activeUsers}
           renderItem={
-            ({item}) => 
+            ({item, index}) => 
             <UserEntry
               user={item}
               handleCheck={this._handleUserEntryCheck}
+              row={index}
             />
           }
           extraData={this.state.refreshUsers}

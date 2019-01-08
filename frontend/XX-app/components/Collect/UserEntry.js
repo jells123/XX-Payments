@@ -13,9 +13,9 @@ class UserEntry extends Component {
 
     _handleChecked = () => {
         this.setState({
-        checked: !this.state.checked
+            checked: !this.state.checked
         }, () => {
-        this.props.handleCheck(this.props.user.id);
+            this.props.handleCheck(this.props.row);
         });
     }
 
@@ -32,18 +32,18 @@ class UserEntry extends Component {
         return (
         <View style={styles.userEntryContainer}>
             <CheckBox
-            title={user.username}
-            checked={this.state.checked}
-            onPress={() => this._handleChecked()}
+                title={user.username}
+                checked={this.state.checked}
+                onPress={() => this._handleChecked()}
             />
             <TextInput
-            underlineColorAndroid={ LIGHT_GRAY }
-            style={{
-                flex: 1,
-                color: '#fff',
-            }}
-            value={textInputValue}
-            editable={isEditable}
+                underlineColorAndroid={ LIGHT_GRAY }
+                style={{
+                    flex: 1,
+                    color: '#fff',
+                }}
+                value={textInputValue}
+                editable={isEditable}
             />
         </View>
         );

@@ -35,7 +35,6 @@ class Home extends Component {
         return response.json();
       })
       .then((responseJson) => {
-        console.log(responseJson);
         if (responseJson.detail) {
           this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
         } else {
