@@ -135,7 +135,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         not_owner = Transaction.objects.exclude(kitty_owner=self.request.user.id)
         my_transactions = not_owner.filter(participant=self.request.user.id)
         return my_transactions.filter(state='OP').order_by('-id')
-        
+
     def update(self, request, *args, **kwargs):
         print("Transaction Update!")
         return super(TransactionViewSet, self).update(request, *args, **kwargs)

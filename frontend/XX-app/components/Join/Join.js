@@ -1,5 +1,16 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlatList, StyleSheet, TouchableOpacity, Text, View, ScrollView, Dimensions } from 'react-native';
+import {
+  AppRegistry,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  ScrollView,
+  Dimensions,
+  RefreshControl,
+  ActivityIndicator
+} from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { MonoText } from '../../components/StyledText';
 import GlobalStyles from '../../constants/Style';
@@ -10,14 +21,24 @@ class Join extends Component {
 
   constructor(props){
     super(props);
-    this.state ={ isLoading: true }
+    this.state ={ isLoading: true };
+    this.state = {
+      refreshing: false,
+    };
   }
 
   componentDidMount(){
     this._loadData();
   }
 
-  _loadData = () => {
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this._loadData().then(() => {
+      this.setState({refreshing: false});
+    });
+  }
+
+  _loadData = async () => {
     let requestUri = `http://${global.ipAddress}:8000/transactions/`;
     fetch(requestUri, {
       method: 'GET',
@@ -84,9 +105,26 @@ class Join extends Component {
       dataSource: navigation.getParam("kittyInvitations"),
     }*/}
 
+    if(this.state.isLoading){
+      return(
+        <View style={{flex: 1, padding: 20}}>
+          <ActivityIndicator size="large" color="#00ff00"/>
+        </View>
+      )
+    }
+
     return (
       <ScrollView style={GlobalStyles.container}
           contentContainerStyle={styles.mainContainer}
+          refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+            title="Pull to refresh"
+            tintColor="#fff"
+            titleColor="#fff"
+          />
+          }
       >
         <FlatList
           data={this.state.kittyInvitations}
