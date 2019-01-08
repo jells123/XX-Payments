@@ -132,7 +132,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionForParticipantSerializer
 
     def get_queryset(self):
-        my_transactions = Transaction.objects.filter(participant=self.request.user.id)
+        not_owner = Transaction.objects.exclude(kitty_owner=self.request.user.id)
+        my_transactions = not_owner.filter(participant=self.request.user.id)
         return my_transactions.filter(state='OP').order_by('-id')
 
 class UserEventViewSet(viewsets.ModelViewSet):
