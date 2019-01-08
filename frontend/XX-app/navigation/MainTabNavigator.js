@@ -9,6 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import CollectScreen from '../screens/CollectScreen';
+import JoinScreen from '../screens/JoinScreen';
 
 const HomeStack = createStackNavigator(
   {
@@ -17,6 +18,9 @@ const HomeStack = createStackNavigator(
     },
     Collect: {
       screen: CollectScreen,
+    },
+    Join: {
+      screen: JoinScreen,
     }
   },
   {

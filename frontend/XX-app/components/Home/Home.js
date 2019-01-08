@@ -48,6 +48,10 @@ class Home extends Component {
       });
   };
 
+  _onButtonJoinPress = () => {
+    this.props.navigation.navigate('Join');
+  };
+
   render() {
 
     let actionButtonSize = Math.min((styles.ex.width - 4*styles.actionButton.margin) / 2, 170);
@@ -80,7 +84,7 @@ class Home extends Component {
                             <Text style={GlobalStyles.buttonText}>$ Collect $</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{...styles.actionButton, width:actionButtonSize, height:actionButtonSize}}
-                    onPress={null}>
+                    onPress={this._onButtonJoinPress}>
                             <Text style={GlobalStyles.buttonText}>$ Join $</Text>
                 </TouchableOpacity>
             </View>

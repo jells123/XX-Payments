@@ -55,15 +55,18 @@ class Kitty(models.Model):
 
 class Transaction(models.Model):
     kitty = models.ForeignKey(Kitty, related_name='transactions', on_delete=models.CASCADE)
+    kitty_owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, blank=True, null=True)
     amount = models.FloatField(validators=[MinValueValidator(0.01)])
     participant = models.ForeignKey('auth.User', related_name='transactions', on_delete=models.CASCADE)
 
     OPEN = 'OP'
-    CLOSED = 'CL'
+    ACCEPTED = 'AC'
+    REJECTED = 'RJ'
 
     TRANSACTION_STATE_CHOICES = (
         (OPEN, 'Open'),
-        (CLOSED, 'Closed'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected')
     )
     state = models.CharField(
         max_length=2,
