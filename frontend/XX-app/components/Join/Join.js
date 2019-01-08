@@ -8,17 +8,48 @@ import Toast, {DURATION} from 'react-native-easy-toast';
 
 class Join extends Component {
 
+  constructor(props){
+    super(props);
+    this.state ={ isLoading: true }
+  }
+
   componentDidMount(){
-         // Start counting when the page is loaded
-         this.timeoutHandle = setTimeout(()=>{
-              // Add your logic for the transition
-         }, 5000);
-    }
+    this._loadData();
+  }
 
-    componentWillUnmount(){
-         clearTimeout(this.timeoutHandle); // This is just necessary in the case that the screen is closed before the timeout fires, otherwise it would cause a memory leak that would trigger the transition regardless, breaking the user experience.
-    }
+  _loadData = () => {
+    let requestUri = `http://${global.ipAddress}:8000/transactions/`;
+    fetch(requestUri, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${global.token}`,
+      },
 
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseJson) => {
+      console.log(responseJson);
+      if (responseJson.detail) {
+        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+      } else {
+        this.setState({
+          isLoading: false,
+          kittyInvitations: responseJson,
+        });
+
+        if (responseJson.length == 0) {
+          this.refs.toast.show("You don't have any invitations yet :(",  DURATION.LENGTH_LONG);
+        }
+      }
+    }).catch(err => {
+      console.log(err);
+      this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+    });
+  }
 
   _onButtonPress = (transaction, accepted) => {
       transaction.state = accepted ? 'AC': 'RJ';
@@ -40,6 +71,8 @@ class Join extends Component {
       .then((responseJson) => {
         console.log(responseJson);
         this.refs.toast.show(`${accepted ? 'Accepted': 'Rejected'}`,  DURATION.LENGTH_LONG);
+        this._loadData();
+        this.forceUpdate();
 
       }).catch(err => {
         console.log(err);
@@ -48,15 +81,18 @@ class Join extends Component {
   };
 
   render() {
-    const { navigation } = this.props;
-    const kittyInvitations = navigation.getParam("kittyInvitations");
+    {/*const { navigation } = this.props;
+    this.setState({
+      isLoading: false,
+      dataSource: navigation.getParam("kittyInvitations"),
+    }*/}
 
     return (
       <ScrollView style={GlobalStyles.container}
           contentContainerStyle={styles.mainContainer}
       >
         <FlatList
-          data={kittyInvitations}
+          data={this.state.kittyInvitations}
           renderItem={({item}) =>
             <View style={styles.invitationContainer}>
               <Text style={styles.item}>
