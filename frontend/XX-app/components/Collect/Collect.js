@@ -46,11 +46,18 @@ class Collect extends Component {
       ],
       kittyAmount: 0.0,
       activeUsers: [],
-      refreshUsers: false
+      refreshUsers: false,
     };
   }
 
   createKittyRequest = () => {
+    
+  // TODO:
+  // disable 'CREATE' button when handling request/response
+  
+  if (this.state.kittyAmount == 0.0) {
+    return;
+  }
 
    let currentUsers = this.state.activeUsers;
    let requestUsersData = [];
@@ -69,6 +76,7 @@ class Collect extends Component {
    });
 
    let requestUri = `http://${global.ipAddress}:8000/kitties/`;
+
     fetch(requestUri, {
       method: 'POST',
       headers: {
@@ -90,13 +98,22 @@ class Collect extends Component {
       } else {
         this.refs.toast.show('Success! Kitty created',  DURATION.LENGTH_LONG);
         console.log(responseJson);
+
+        var funny = this;
+        setTimeout(function () {
+          funny.props.navigation.navigate('Wait', {
+            kittyData: responseJson,
+            username: funny.props.navigation.getParam("username", "")
+          });
+        }, 1000);
       }
     }).catch(err => {
       console.log(err);
       this.refs.toast.show('Error occured when creating a kitty',  DURATION.LENGTH_LONG);
+    }).finally(() => {
+        ;
     });
 
-   console.log(requestBody);
   }
 
   getCurrentDivideOption = () => {
@@ -191,7 +208,6 @@ class Collect extends Component {
   }
 
   onDivideOptionPress = (data) => {
-    console.log(data);
     this.setState(
       { 
         divideOptions : data 
@@ -222,7 +238,6 @@ class Collect extends Component {
 
     if (activeUsers != "") {
 
-      console.log("RENDERS...");
       let ownerUserItem = activeUsers.find(item => item.username === ownerUsername);
       activeUsers = activeUsers.filter(item => item.username !== ownerUsername);
       activeUsers.unshift(ownerUserItem);

@@ -134,6 +134,10 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         my_transactions = Transaction.objects.filter(participant=self.request.user.id)
         return my_transactions.filter(state='OP').order_by('-id')
+        
+    def update(self, request, *args, **kwargs):
+        print("Transaction Update!")
+        return super(TransactionViewSet, self).update(request, *args, **kwargs)
 
 class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()
