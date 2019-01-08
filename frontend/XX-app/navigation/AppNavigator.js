@@ -6,6 +6,7 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import CollectScreen from '../screens/CollectScreen';
+import JoinScreen from '../screens/JoinScreen';
 
 const AppNavigator = createStackNavigator(
   {
@@ -19,11 +20,14 @@ const AppNavigator = createStackNavigator(
       screen: RegisterScreen
     },
     Collect: {
-      screen: CollectScreen,
+      screen: CollectScreen
+    },
+    Join: {
+      screen: JoinScreen
     }
   },
   {
-    initialRouteName: "Collect"
+    initialRouteName: "Login"
   }
 );
 

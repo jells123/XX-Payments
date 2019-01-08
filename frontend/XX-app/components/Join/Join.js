@@ -67,7 +67,7 @@ class Join extends Component {
                     onPress={() => this._onButtonPress(item, true)}>
                             <Text style={GlobalStyles.buttonText}>Accept</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{...styles.actionButton, backgroundColor: '#640000'}}
+                <TouchableOpacity style={{...styles.actionButton, backgroundColor: '#FF0000'}}
                     onPress={() => this._onButtonPress(item, false)}>
                             <Text style={GlobalStyles.buttonText}>Reject</Text>
                 </TouchableOpacity>
@@ -104,9 +104,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between'
   },
   invitationContainer: {
-    flex: 0.3,
-    flexDirection: 'row',
-    height: 100,
+    height: 150,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#8425a3',
