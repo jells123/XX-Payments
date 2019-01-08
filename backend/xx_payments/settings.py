@@ -30,6 +30,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'xx_payments',
+
     'kitty.apps.KittyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +53,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379')],
+        },
+        "ROUTING": "xx_payments.routing.channel_routing",
+    },
+}
 
 ROOT_URLCONF = 'xx_payments.urls'
 
@@ -70,7 +83,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'xx_payments.wsgi.application'
-
+# ASGI_APPLICATION = 'xx_payments.asgi.application'
+ASGI_APPLICATION = 'xx_payments.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

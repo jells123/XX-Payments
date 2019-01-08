@@ -1,3 +1,8 @@
 Django>=2.1.2
 psycopg2
 djangorestframework>=3.2.4
+channels_redis
+# asgiref==2.2.0
+# asgi_redis==1.4.3
+# channels==2.0.2
+# simple-websocket-server
