@@ -32,7 +32,6 @@ class Join extends Component {
       return response.json();
     })
     .then((responseJson) => {
-      console.log(responseJson);
       if (responseJson.detail) {
         this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
       } else {
@@ -63,13 +62,11 @@ class Join extends Component {
           'Authorization': `Token ${global.token}`,
         },
         body: JSON.stringify(transaction),
-
       })
       .then((response) => {
         return response.json();
       })
       .then((responseJson) => {
-        console.log(responseJson);
         this.refs.toast.show(`${accepted ? 'Accepted': 'Rejected'}`,  DURATION.LENGTH_LONG);
         this._loadData();
         this.forceUpdate();

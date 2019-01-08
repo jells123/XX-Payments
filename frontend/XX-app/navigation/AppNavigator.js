@@ -7,6 +7,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import CollectScreen from '../screens/CollectScreen';
 import JoinScreen from '../screens/JoinScreen';
+import WaitScreen from '../screens/WaitScreen';
 
 const AppNavigator = createStackNavigator(
   {
@@ -24,6 +25,9 @@ const AppNavigator = createStackNavigator(
     },
     Join: {
       screen: JoinScreen
+    },
+    Wait: {
+      screen: WaitScreen
     }
   },
   {

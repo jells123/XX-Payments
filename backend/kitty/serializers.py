@@ -123,6 +123,10 @@ class TransactionForParticipantSerializer(serializers.HyperlinkedModelSerializer
         model = Transaction
         fields = ("id", "url", "kitty_owner", "kitty", "participant", "amount", "state")
 
+    def update(self, instance, validated_data):
+        print("Kitty Owner:", instance.kitty_owner, instance.kitty_owner.id)
+        print("Transaction Owner:", instance.participant, instance.participant.id)
+        return instance
 
 class UserEventSerializer(serializers.HyperlinkedModelSerializer):
     date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S', read_only=True)
