@@ -12,6 +12,7 @@ class UserEntry extends Component {
     }
 
     _handleChecked = () => {
+        console.log("checked handler");
         this.setState({
             checked: !this.state.checked
         }, () => {
@@ -19,41 +20,52 @@ class UserEntry extends Component {
         });
     }
 
-    componentWillReceiveProps(props) {
-        ;
-    }
-
     render() {
         let user = this.props.user;
-
         let textInputValue = user.userAmount;
-        let isEditable = !(user.userAmount == "");
 
+        let viewStyle = styles.userEntryContainer;
+        if (user.isOwner) {
+            viewStyle = styles.ownerEntryContainer;
+        }
+        
         return (
-        <View style={styles.userEntryContainer}>
-            <CheckBox
-                title={user.username}
-                checked={this.state.checked}
-                onPress={() => this._handleChecked()}
-            />
-            <TextInput
-                underlineColorAndroid={ LIGHT_GRAY }
-                style={{
-                    flex: 1,
-                    color: '#fff',
-                }}
-                value={textInputValue}
-                editable={isEditable}
-            />
-        </View>
+            <View style={viewStyle}>
+                <CheckBox
+                    title={user.username}
+                    checked={this.state.checked}
+                    onPress={() => this._handleChecked()}
+                />
+                <TextInput
+                    underlineColorAndroid={ LIGHT_GRAY }
+                    style={{
+                        flex: 1,
+                        color: '#fff',
+                    }}
+                    value={textInputValue}
+                    editable={user.isEditable}
+                />
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     userEntryContainer: {
-        flex:1, 
-        flexDirection: 'row'
+        flex: 1, 
+        flexDirection: 'row',
+        // marginBottom: 5,
+        marginTop: 5,
+        paddingRight: 10
+    },
+    ownerEntryContainer: {
+        flex: 1, 
+        flexDirection: 'row',
+        // marginBottom: 5,
+        marginTop: 5,
+        paddingRight: 10,
+
+        backgroundColor: "#a659bf"
     }
 });
 

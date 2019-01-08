@@ -48,7 +48,8 @@ class ActiveUsersViewSet(viewsets.ReadOnlyModelViewSet):
         active_users_ids = UserEvent.objects.filter(date__range=[now_minus_10, now]).values_list('user', flat=True)
         active_users = User.objects.filter(pk__in=active_users_ids)
 
-        return active_users.exclude(id=self.request.user.id)
+        # return active_users.exclude(id=self.request.user.id)
+        return active_users
 
 
 class ProfileViewSet(viewsets.ModelViewSet):

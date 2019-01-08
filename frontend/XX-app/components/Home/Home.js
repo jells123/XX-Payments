@@ -39,7 +39,8 @@ class Home extends Component {
           this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
         } else {
           this.props.navigation.navigate('Collect', {
-            activeUsers: responseJson
+            activeUsers: responseJson,
+            username: this.props.navigation.getParam("username", "")
           });
         }
       }).catch(err => {

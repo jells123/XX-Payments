@@ -3,6 +3,8 @@ import { FlatList, TouchableOpacity, StyleSheet, Text, View, ScrollView, TextInp
 import { withNavigation } from 'react-navigation';
 import { RadioGroup } from 'react-native-btr';
 
+import Toast, {DURATION} from 'react-native-easy-toast';
+
 import GlobalStyles from '../../constants/Style';
 
 import KittyAmountInput from './KittyAmountInput';
@@ -17,8 +19,6 @@ class Collect extends Component {
 
   constructor(props) {
     super(props);
-
-    var activeUsers = []
 
     // generates dummy active users list...
     /*
@@ -45,9 +45,58 @@ class Collect extends Component {
         },
       ],
       kittyAmount: 0.0,
-      activeUsers: activeUsers,
+      activeUsers: [],
       refreshUsers: false
     };
+  }
+
+  createKittyRequest = () => {
+
+   let currentUsers = this.state.activeUsers;
+   let requestUsersData = [];
+    for (var i = 0; i < currentUsers.length; i++) {
+      if (currentUsers[i].userAmount != "") {
+        requestUsersData.push({
+          username: currentUsers[i].username,
+          amount: currentUsers[i].userAmount
+        });
+      }
+    }
+
+   let requestBody = JSON.stringify({
+     amount: this.state.kittyAmount,
+     participants: requestUsersData
+   });
+
+   let requestUri = `http://${global.ipAddress}:8000/kitties/`;
+    fetch(requestUri, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${global.token}`,
+      },
+      body: requestBody
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseJson) => {
+      if (responseJson.error_message) {
+        var obj = JSON.parse(repsonseJson);
+        var values = Object.keys(obj).map(function (key) { return obj[key]; });
+        console.log(values);
+        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+      } else {
+        this.refs.toast.show('Success! Kitty created',  DURATION.LENGTH_LONG);
+        console.log(responseJson);
+      }
+    }).catch(err => {
+      console.log(err);
+      this.refs.toast.show('Error occured when creating a kitty',  DURATION.LENGTH_LONG);
+    });
+
+   console.log(requestBody);
   }
 
   getCurrentDivideOption = () => {
@@ -74,19 +123,33 @@ class Collect extends Component {
     return (kitty / parseFloat(count));
   }
 
-  updateEvenKittyParts = (kittyPart) => {
-    let updatedActiveUsers = this.state.activeUsers;
-    for (var i = 0; i < updatedActiveUsers.length; i++) {
-      if (updatedActiveUsers[i].userAmount != "") {
-        updatedActiveUsers[i].userAmount = kittyPart;
-      }
-    }
-
+  refreshUsersView = (updatedActiveUsers) => {
     var refresh = !this.state.refreshUsers;
     this.setState({
       activeUsers : updatedActiveUsers,
       refreshUsers: refresh
     });
+  }
+
+  updateEvenKittyParts = (kittyPart) => {
+    let updatedActiveUsers = this.state.activeUsers;
+    for (var i = 0; i < updatedActiveUsers.length; i++) {
+      if (updatedActiveUsers[i].userAmount != "") {
+        updatedActiveUsers[i].userAmount = kittyPart;
+        updatedActiveUsers[i].isEditable = false;
+      }
+    }
+    this.refreshUsersView(updatedActiveUsers);
+  }
+
+  setUsersEditable = () => {
+    let updatedActiveUsers = this.state.activeUsers;
+    for (var i = 0; i < updatedActiveUsers.length; i++) {
+      if (updatedActiveUsers[i].userAmount != "") {
+        updatedActiveUsers[i].isEditable = true;
+      }
+    }
+    this.refreshUsersView(updatedActiveUsers);
   }
 
   _handleKittyAmount = (amount) => {
@@ -99,6 +162,10 @@ class Collect extends Component {
           case DivideOptionEnum.EVEN:
             let kittyPart = this.countEvenKittyPart().toFixed(2);
             this.updateEvenKittyParts(kittyPart);
+            break;
+          case DivideOptionEnum.CUSTOM:
+            // ... do nothing?
+            break;
         }
       }
     );
@@ -119,25 +186,60 @@ class Collect extends Component {
       case DivideOptionEnum.EVEN:
         let kittyPart = this.countEvenKittyPart().toFixed(2);
         this.updateEvenKittyParts(kittyPart);
+        break;
     }
   }
 
   onDivideOptionPress = (data) => {
-    console.log(this.getCurrentDivideOption());
-    this.setState({ data })
+    console.log(data);
+    this.setState(
+      { 
+        divideOptions : data 
+      },
+      () => {
+          switch (this.getCurrentDivideOption()) {
+            case DivideOptionEnum.EVEN:
+              let kittyPart = this.countEvenKittyPart().toFixed(2);
+              this.updateEvenKittyParts(kittyPart);
+              break;
+            case DivideOptionEnum.CUSTOM:
+              this.setUsersEditable();
+              break;
+          }
+        }
+      );
   };
 
   render() {
     
     // receive active users from navigation props
+    // and add more properties
+    // TODO: separate server response vs data stored about that response?
+
     const { navigation } = this.props;
     let activeUsers = navigation.getParam("activeUsers", "");
+    let ownerUsername = navigation.getParam("username", "???");
+
     if (activeUsers != "") {
+
+      console.log("RENDERS...");
+      let ownerUserItem = activeUsers.find(item => item.username === ownerUsername);
+      activeUsers = activeUsers.filter(item => item.username !== ownerUsername);
+      activeUsers.unshift(ownerUserItem);
+
       for (var i = 0; i < activeUsers.length; i++) {
         if (!("userAmount" in activeUsers[i])) {
           activeUsers[i].userAmount = "";
         }
+        if (!("isEditable" in activeUsers[i])) {
+          activeUsers[i].isEditable = false;
+        }
+        if (!("isOwner" in activeUsers[i])) {
+          activeUsers[i].isOwner = false;
+        }
       }
+
+      ownerUserItem.isOwner = true;
       this.state.activeUsers = activeUsers;
     }
 
@@ -163,25 +265,30 @@ class Collect extends Component {
         </View>
         <View style={styles.createButtonContainer}>
           <TouchableOpacity style={styles.createButton}
-                    onPress={null}>
+                    onPress={this.createKittyRequest}>
             <Text style={styles.createText}>CREATE</Text>
           </TouchableOpacity>
-          <Text style={GlobalStyles.commonText}>Choose participants:</Text>
+          <View style={styles.chooseTextContainer}>
+            <Text style={GlobalStyles.commonText}>Choose participants:</Text>
+          </View>
         </View>
 
       <ScrollView 
-        style={{flex: 1, marginTop: 20, marginBottom: 10, marginLeft: 5, marginRight: 5}}
+        style={styles.usersScrollView}
         contentContainerStyle={{flex: 1}}
       >
         <FlatList
           data={this.state.activeUsers}
           renderItem={
-            ({item, index}) => 
-            <UserEntry
-              user={item}
-              handleCheck={this._handleUserEntryCheck}
-              row={index}
-            />
+            ({item, index}) => {
+              return (
+                <UserEntry
+                  user={item}
+                  handleCheck={this._handleUserEntryCheck}
+                  row={index}
+                />
+              );
+            }
           }
           extraData={this.state.refreshUsers}
           keyExtractor={
@@ -189,6 +296,7 @@ class Collect extends Component {
           }
         />
       </ScrollView>
+      <Toast ref="toast"/>
       </ScrollView>
     );
   }
@@ -202,9 +310,8 @@ const styles = StyleSheet.create({
       height: 44,
   },
   kittyAmountContainer: {
-    flex: 0.3,
+    flex: 0.25,
     flexDirection: 'row',
-    height: 100,
     alignItems: 'center',
     justifyContent: 'center', 
     backgroundColor: '#8425a3',
@@ -247,12 +354,24 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   createButtonContainer: {
-    flex:0.3,
+    flex: 0.3,
+    marginBottom: 10
+  },
+  chooseTextContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+    marginLeft: 10,
+    marginTop: 10,
   },
   createText: {
     ...GlobalStyles.buttonText,
     fontSize: 17
   },
+  usersScrollView: {
+    flex: 1, 
+    marginTop: 20, marginBottom: 10, marginLeft: 5, marginRight: 5,
+    backgroundColor: '#8425a3'
+  }
 })
 
 export default withNavigation(Collect);
