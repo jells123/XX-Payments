@@ -110,7 +110,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("kitty", "participant", "amount", "state")
+        fields = ("id", "url", "kitty", "participant", "amount", "state")
 
 
 class TransactionForParticipantSerializer(serializers.HyperlinkedModelSerializer):
