@@ -81,9 +81,9 @@ class Wait extends Component {
         <FlatList
           data={this.state.kittyTransactions}
           renderItem={({item}) =>
-            <View style={styles.transactionContainer}>
+              <View style={(item.state === "OP" || item.state === "RJ") ? styles.red : styles.green}>
               <Text style={styles.item}>
-                {item.participant} owes you {item.amount}zł
+                {item.participant}
               </Text>
             </View>
           }
@@ -117,11 +117,27 @@ const styles = StyleSheet.create({
    textAlign: 'center',
    margin: 10,
   },
-  transactionContainer: {
-    height: 75,
+  red: {
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#EA7777',
+    marginTop: 15,
+    marginBottom: 15
+  },
+  green: {
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#60d260',
+    marginTop: 15,
+    marginBottom: 15
+  },
+  neutral: {
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8425a3',
     marginTop: 15,
     marginBottom: 15
   },
@@ -129,3 +145,5 @@ const styles = StyleSheet.create({
 
 export default withNavigation(Wait);
 //#98FB98 #EA7777
+//{/*<View style={(item.state === "OP") ? (styles.neutral) : ((item.state === 'AC') ? (styles.green) : (styles.red))}>*/}
+// owes you {item.amount}zł
