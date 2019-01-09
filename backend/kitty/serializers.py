@@ -28,7 +28,7 @@ class KittyParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("username", "amount")
+        fields = ("id", "username", "amount", "state")
 
 class KittySerializer(serializers.HyperlinkedModelSerializer):
     created = serializers.DateTimeField(read_only=True)
@@ -52,6 +52,10 @@ class KittySerializer(serializers.HyperlinkedModelSerializer):
         for p in participants_data:
             transaction = Transaction(kitty=kitty, amount=p['amount'], participant=p['participant'], kitty_owner=kitty.owner)
             transactions_sum += transaction.amount
+
+            if p['participant'] == kitty.owner:
+                transaction.state = "AC"
+
             new_transactions.append(transaction)
 
         if kitty.amount == transactions_sum:

@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlatList, StyleSheet, TouchableOpacity, Text, View, ScrollView, Dimensions } from 'react-native';
+import {
+  AppRegistry,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator
+} from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import GlobalStyles from '../../constants/Style';
@@ -28,7 +38,7 @@ class Wait extends Component {
     let intervalId = setInterval(() => {
       this.state.isLoading = true;
 
-      let requestUri = `http://${global.ipAddress}:8000/kitty-transactions/?kitty=${this.props.navigation.getParam("kittyId", "")}`;
+      let requestUri = `http://${global.ipAddress}:8000/kitties/${this.props.navigation.getParam("kittyId", "")}/`;
       fetch(requestUri, {
         method: 'GET',
         headers: {
@@ -46,22 +56,22 @@ class Wait extends Component {
         } else {
 
          console.log(responseJson);
-   
+
          var countProgress = 0;
          var countGoal = 0;
-         for (var i = 0; i < responseJson.length; i++) {
-           if ("state" in responseJson[i] && responseJson[i].state !== "OP") {
+         for (var i = 0; i < responseJson.participants.length; i++) {
+           if ("state" in responseJson.participants[i] && responseJson.participants[i].state !== "OP") {
              countProgress++;
            }
-            countGoal += responseJson[i].amount;
+            countGoal += responseJson.participants[i].amount;
          }
 
          var negState = !this.state.refresh;
          this.setState({
            isLoading: false,
-           kittyTransactions: responseJson,
+           kittyTransactions: responseJson.participants,
            refresh: negState,
-           progress: countProgress / responseJson.length,
+           progress: countProgress / responseJson.participants.length,
 
            goal: countGoal
          }, () => {
@@ -70,14 +80,14 @@ class Wait extends Component {
              this.refs.toast.show('Kitty finished!',  DURATION.LENGTH_LONG);
            }
          });
-   
+
         }
       }).catch(err => {
         console.log(err);
         this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
       });
     }, 1000);
-  } 
+  }
   catch (e) {
     console.log(e);
   }
@@ -88,6 +98,14 @@ class Wait extends Component {
   }
 
   render() {
+
+    if(this.state.isLoading){
+      return(
+        <View style={{flex: 1, padding: 20, backgroundColor: '#8425a3'}}>
+          <ActivityIndicator size="large" color="#ffffff"/>
+        </View>
+      )
+    }
 
     return (
       <ScrollView style={GlobalStyles.container}
@@ -107,7 +125,7 @@ class Wait extends Component {
             renderItem={({item}) => {
               let itemStyle = item.state === "RJ" ? styles.red : item.state === "AC" ? styles.green : styles.neutral;
               
-              let itemText = `${item.participant}: ${item.amount.toFixed(2)}`;
+              let itemText = `${item.username}: ${item.amount.toFixed(2)}`;
               if (item.state === "OP") {
                 let itemStyle = styles.neutral;
                 itemText += " - waiting...";
@@ -134,12 +152,12 @@ class Wait extends Component {
             extraData={this.state.refresh}
           />
         </View>
-        {this.state.progress === 1 && 
+        {this.state.progress === 1 &&
           <View style={styles.goBackButtonContainer}>
             <TouchableOpacity style={{...GlobalStyles.buttonContainer, alignItems: 'center'}}
                 onPress={this._onGoBackButtonPress}>
                 <Text style={{...GlobalStyles.buttonText, fontSize: 17}}>GO BACK</Text>
-            </TouchableOpacity>        
+            </TouchableOpacity>
           </View>
         }
         <Toast ref="toast" position={'top'}/>
@@ -195,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8425a3',
   },
   goBackButtonContainer: {
-    flex: 1, 
+    flex: 1,
     justifyContent: 'flex-end'
   }
 });
