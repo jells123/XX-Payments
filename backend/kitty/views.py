@@ -140,6 +140,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         print("Transaction Update!")
         return super(TransactionViewSet, self).update(request, *args, **kwargs)
 
+# to mozna lepiej zrobic -> pobrac kitty razem z lista transakcji zamiast filtrowac, poprawie
 class KittyTransactionsViewSet(generics.ListAPIView):
     serializer_class = TransactionSerializer
 

@@ -13,6 +13,7 @@ class Wait extends Component {
    this.state ={ isLoading: true };
    this.state = {
      progress: 0,
+     kittyTransactions: "",
    };
  }
 
@@ -43,6 +44,16 @@ class Wait extends Component {
          isLoading: false,
          kittyTransactions: responseJson,
        });
+
+       for (var i = 0; i < responseJson.length; i++) {
+         if ("state" in responseJson[i] && responseJson[i].state === "AC") {
+           var currentProgress = this.state.progress;
+           this.setState({
+             progress: currentProgress + (1 / (responseJson.length - 1))
+           });
+         }
+       }
+
      }
    }).catch(err => {
      console.log(err);
