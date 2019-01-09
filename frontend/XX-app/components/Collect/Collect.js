@@ -102,7 +102,7 @@ class Collect extends Component {
         var funny = this;
         setTimeout(function () {
           funny.props.navigation.navigate('Wait', {
-            kittyId: responseJson.id,
+            kittyData: responseJson,
             username: funny.props.navigation.getParam("username", "")
           });
         }, 1000);

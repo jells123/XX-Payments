@@ -22,7 +22,8 @@ class Wait extends Component {
  }
 
  _loadData = async () => {
-   let requestUri = `http://${global.ipAddress}:8000/kitty-transactions/?kitty=${this.props.navigation.getParam("kittyId", "")}`;
+   //let requestUri = `http://${global.ipAddress}:8000/kitty-transactions/?kitty=${this.props.navigation.getParam("kittyId", "")}`;
+   let requestUri = `http://${global.ipAddress}:8000/kitties/${this.props.navigation.getParam("kittyData", "").id}/`;
    fetch(requestUri, {
      method: 'GET',
      headers: {
@@ -41,7 +42,7 @@ class Wait extends Component {
      } else {
        this.setState({
          isLoading: false,
-         kittyTransactions: responseJson,
+         kittyTransactions: responseJson.participants,
        });
      }
    }).catch(err => {
@@ -83,7 +84,7 @@ class Wait extends Component {
           renderItem={({item}) =>
             <View style={styles.transactionContainer}>
               <Text style={styles.item}>
-                {item.participant} owes you {item.amount}zł
+                {item.username} owes you {item.amount}zł
               </Text>
             </View>
           }

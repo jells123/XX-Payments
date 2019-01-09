@@ -28,7 +28,7 @@ class KittyParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ("username", "amount")
+        fields = ("username", "amount", "state", "id")
 
 class KittySerializer(serializers.HyperlinkedModelSerializer):
     created = serializers.DateTimeField(read_only=True)
