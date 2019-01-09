@@ -61,6 +61,10 @@ class Wait extends Component {
         ; // hehe
       });
 
+       this.setState({
+         progress: 0
+       });
+
        for (var i = 0; i < responseJson.length; i++) {
          if ("state" in responseJson[i] && responseJson[i].state !== "OP") {
            var currentProgress = this.state.progress;
