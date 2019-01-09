@@ -36,14 +36,13 @@ class Wait extends Component {
           'Content-Type': 'application/json',
           'Authorization': `Token ${global.token}`,
         },
-   
       })
       .then((response) => {
         return response.json();
       })
       .then((responseJson) => {
         if (responseJson.detail) {
-          // this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+          this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
         } else {
 
          console.log(responseJson);
@@ -68,14 +67,14 @@ class Wait extends Component {
          }, () => {
            if (this.state.progress === 1) {
              clearInterval(intervalId);
-            //  this.refs.toast.show('Kitty finished!',  DURATION.LENGTH_LONG);
+             this.refs.toast.show('Kitty finished!',  DURATION.LENGTH_LONG);
            }
          });
    
         }
       }).catch(err => {
         console.log(err);
-        // this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
       });
     }, 1000);
   } 
@@ -143,7 +142,7 @@ class Wait extends Component {
             </TouchableOpacity>        
           </View>
         }
-        {/* <Toast ref="toast" position={'top'}/> */}
+        <Toast ref="toast" position={'top'}/>
       </ScrollView>
     );
   }
