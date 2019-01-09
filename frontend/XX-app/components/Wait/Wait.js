@@ -44,6 +44,10 @@ class Wait extends Component {
          kittyTransactions: responseJson,
        });
 
+       this.setState({
+         progress: 0
+       });
+
        for (var i = 0; i < responseJson.length; i++) {
          if ("state" in responseJson[i] && responseJson[i].state === "AC") {
            var currentProgress = this.state.progress;
