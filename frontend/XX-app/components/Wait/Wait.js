@@ -16,6 +16,13 @@ import GlobalStyles from '../../constants/Style';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import ProgressBar from 'react-native-progress/Bar';
 
+function sortByKey(array, key) {
+  return array.sort(function(a, b) {
+      var x = a[key]; var y = b[key];
+      return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  });
+}
+
 class Wait extends Component {
 
   constructor(props) {
@@ -56,24 +63,29 @@ class Wait extends Component {
         } else {
 
          console.log(responseJson);
+         let participants = responseJson.participants;
+         partcipants = sortByKey(participants, 'id');
 
          var countProgress = 0;
-         var countGoal = 0;
-         for (var i = 0; i < responseJson.participants.length; i++) {
-           if ("state" in responseJson.participants[i] && responseJson.participants[i].state !== "OP") {
+         var countCurrentAmount = 0;
+         for (var i = 0; i < participants.length; i++) {
+           if ("state" in participants[i] && participants[i].state !== "OP") {
              countProgress++;
+             if (participants[i].state === "AC") {
+               countCurrentAmount += participants[i].amount;
+             }
            }
-            countGoal += responseJson.participants[i].amount;
          }
 
          var negState = !this.state.refresh;
          this.setState({
            isLoading: false,
-           kittyTransactions: responseJson.participants,
+           kittyTransactions: participants,
            refresh: negState,
-           progress: countProgress / responseJson.participants.length,
+           progress: countProgress / participants.length,
 
-           goal: countGoal
+           goal: responseJson.amount,
+           currentAmount: countCurrentAmount
          }, () => {
            if (this.state.progress === 1) {
              clearInterval(intervalId);
@@ -112,7 +124,7 @@ class Wait extends Component {
           contentContainerStyle={styles.mainContainer}
       >
         <View style={styles.progressContainer}>
-          <Text style={styles.welcome}>Goal: {this.state.goal.toFixed(2)}</Text>
+          <Text style={styles.welcome}>Goal: {this.state.currentAmount.toFixed(2)} / {this.state.goal.toFixed(2)}</Text>
           <ProgressBar
             style={styles.progress}
             progress={this.state.progress}
@@ -156,7 +168,7 @@ class Wait extends Component {
           <View style={styles.goBackButtonContainer}>
             <TouchableOpacity style={{...GlobalStyles.buttonContainer, alignItems: 'center'}}
                 onPress={this._onGoBackButtonPress}>
-                <Text style={{...GlobalStyles.buttonText, fontSize: 17}}>GO BACK</Text>
+                <Text style={{...GlobalStyles.buttonText, fontSize: 14}}>GO BACK</Text>
             </TouchableOpacity>
           </View>
         }
@@ -172,6 +184,9 @@ const styles = StyleSheet.create({
       padding: 10,
       fontSize: 18,
       height: 44,
+  },
+  mainContainer: {
+    flex: 1
   },
   progressContainer: {
     flex: 1,
@@ -201,7 +216,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 15,
-    marginBottom: 15
+    marginBottom: 15,
+    opacity: 0.8
   },
   red: {
     backgroundColor: '#FF0000',
@@ -213,8 +229,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#8425a3',
   },
   goBackButtonContainer: {
-    flex: 1,
-    justifyContent: 'flex-end'
+    flex: 0,
+    justifyContent: 'flex-end',
+    marginLeft: 60,
+    marginRight: 60
   }
 });
 
