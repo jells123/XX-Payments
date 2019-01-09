@@ -4,8 +4,6 @@ from rest_framework import renderers
 from rest_framework.routers import DefaultRouter
 
 from .views import CreateUserAPIView, LogoutUserAPIView
-from .models import Transaction
-from .serializers import TransactionSerializer
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
@@ -24,7 +22,4 @@ urlpatterns = [
     path('login/', views.LoginAPI.as_view()),
     path('register/', CreateUserAPIView.as_view()),
     path('logout/', LogoutUserAPIView.as_view()),
-    path('kitty-transactions/',
-        views.KittyTransactionsViewSet.as_view(queryset=Transaction.objects.all(),
-        serializer_class=TransactionSerializer), name='kitty-transaction-list')
 ]

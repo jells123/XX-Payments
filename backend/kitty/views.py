@@ -140,19 +140,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
         print("Transaction Update!")
         return super(TransactionViewSet, self).update(request, *args, **kwargs)
 
-# to mozna lepiej zrobic -> pobrac kitty razem z lista transakcji zamiast filtrowac, poprawie
-class KittyTransactionsViewSet(generics.ListAPIView):
-    serializer_class = TransactionSerializer
-
-    def get_queryset(self):
-        not_participant = Transaction.objects.exclude(participant=self.request.user.id)
-        queryset = not_participant.filter(kitty_owner=self.request.user.id)
-
-        kitty = self.request.query_params.get('kitty', None)
-        if kitty is not None:
-            queryset = queryset.filter(kitty__id=kitty)
-        return queryset
-
 
 class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()
