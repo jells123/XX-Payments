@@ -10,18 +10,28 @@ class Wait extends Component {
 
   constructor(props) {
    super(props);
-   this.state ={ isLoading: true };
    this.state = {
+
+     isLoading: true,
      progress: 0,
      kittyTransactions: "",
+     refresh: false
+
    };
  }
 
- componentDidMount() {
-   this._loadData();
+ async componentDidMount() {
+  try {
+    setInterval(this._loadData, 1000);
+  } 
+  catch (e) {
+    console.log(e);
+  }
  }
 
  _loadData = async () => {
+   this.state.isLoading = true;
+
    let requestUri = `http://${global.ipAddress}:8000/kitty-transactions/?kitty=${this.props.navigation.getParam("kittyId", "")}`;
    fetch(requestUri, {
      method: 'GET',
@@ -39,20 +49,26 @@ class Wait extends Component {
      if (responseJson.detail) {
        this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
      } else {
-       this.setState({
-         isLoading: false,
-         kittyTransactions: responseJson,
-       });
+
+      console.log(responseJson);
+
+      var negState = !this.state.refresh;
+      this.setState({
+        isLoading: false,
+        kittyTransactions: responseJson,
+        refresh: negState
+      }, () => {
+        ; // hehe
+      });
 
        for (var i = 0; i < responseJson.length; i++) {
-         if ("state" in responseJson[i] && responseJson[i].state === "AC") {
+         if ("state" in responseJson[i] && responseJson[i].state !== "OP") {
            var currentProgress = this.state.progress;
            this.setState({
              progress: currentProgress + (1 / (responseJson.length - 1))
            });
          }
        }
-
      }
    }).catch(err => {
      console.log(err);
@@ -65,26 +81,31 @@ class Wait extends Component {
       <ScrollView style={GlobalStyles.container}
           contentContainerStyle={styles.mainContainer}
       >
-      <View style={styles.container}>
-      <Text style={styles.welcome}>Your kitty status</Text>
-      <ProgressBar
-        style={styles.progress}
-        progress={this.state.progress}
-        indeterminate={this.state.indeterminate}
-        />
-        </View>
-        <FlatList
-          data={this.state.kittyTransactions}
-          renderItem={({item}) =>
-              <View style={(item.state === "OP" || item.state === "RJ") ? styles.red : styles.green}>
-              <Text style={styles.item}>
-                {item.participant}
-              </Text>
-            </View>
-          }
-          keyExtractor={(item) => item.id.toString()}
-        />
-        <Toast ref="toast" position={'top'}/>
+        <View style={styles.container}>
+          <Text style={styles.welcome}>Your kitty status</Text>
+          <ProgressBar
+            style={styles.progress}
+            progress={this.state.progress}
+            indeterminate={this.state.indeterminate}
+            />
+          </View>
+          <FlatList
+            data={this.state.kittyTransactions}
+            renderItem={({item}) => {
+              let itemStyle = item.state === "RJ" ? styles.red : item.state === "AC" ? styles.green : styles.neutral;
+              return (
+                <View style={itemStyle}>
+                  <Text style={styles.item}>
+                    {item.participant} : {item.state}
+                  </Text>
+                </View>
+              );
+              }
+            }
+            keyExtractor={(item) => item.id.toString()}
+            extraData={this.state.refresh}
+          />
+          <Toast ref="toast" position={'top'}/>
       </ScrollView>
     );
   }
