@@ -10,15 +10,44 @@ class Wait extends Component {
 
   constructor(props) {
    super(props);
-
+   this.state ={ isLoading: true };
    this.state = {
      progress: 0,
-     indeterminate: true,
    };
  }
 
  componentDidMount() {
-   this.animate();
+   //this.animate();
+   this._loadData();
+ }
+
+ _loadData = async () => {
+   let requestUri = `http://${global.ipAddress}:8000/kitty-transactions/?kitty=${this.props.navigation.getParam("kittyId", "")}`;
+   fetch(requestUri, {
+     method: 'GET',
+     headers: {
+       Accept: 'application/json',
+       'Content-Type': 'application/json',
+       'Authorization': `Token ${global.token}`,
+     },
+
+   })
+   .then((response) => {
+     return response.json();
+   })
+   .then((responseJson) => {
+     if (responseJson.detail) {
+       this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+     } else {
+       this.setState({
+         isLoading: false,
+         kittyTransactions: responseJson,
+       });
+     }
+   }).catch(err => {
+     console.log(err);
+     this.refs.toast.show('Error occured',  DURATION.LENGTH_LONG);
+   });
  }
 
  animate() {
@@ -37,7 +66,6 @@ class Wait extends Component {
 }
 
   render() {
-
     return (
       <ScrollView style={GlobalStyles.container}
           contentContainerStyle={styles.mainContainer}
@@ -50,6 +78,17 @@ class Wait extends Component {
         indeterminate={this.state.indeterminate}
         />
         </View>
+        <FlatList
+          data={this.state.kittyTransactions}
+          renderItem={({item}) =>
+            <View style={styles.transactionContainer}>
+              <Text style={styles.item}>
+                {item.participant} owes you {item.amount}zł
+              </Text>
+            </View>
+          }
+          keyExtractor={(item) => item.id.toString()}
+        />
         <Toast ref="toast" position={'top'}/>
       </ScrollView>
     );
@@ -57,6 +96,12 @@ class Wait extends Component {
 }
 
 const styles = StyleSheet.create({
+  item: {
+      ...GlobalStyles.commonText,
+      padding: 10,
+      fontSize: 18,
+      height: 44,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -72,6 +117,15 @@ const styles = StyleSheet.create({
    textAlign: 'center',
    margin: 10,
   },
+  transactionContainer: {
+    height: 75,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EA7777',
+    marginTop: 15,
+    marginBottom: 15
+  },
 });
 
 export default withNavigation(Wait);
+//#98FB98 #EA7777

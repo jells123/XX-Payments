@@ -39,7 +39,7 @@ class KittySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Kitty
-        fields = ('amount', 'created', 'owner', 'participants')
+        fields = ('id', 'amount', 'created', 'owner', 'participants')
 
     def create(self, validated_data):
 
@@ -106,7 +106,7 @@ class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     kitty = serializers.HyperlinkedRelatedField(many=False, view_name='kitty-detail', queryset=Kitty.objects.all())
-    participant = serializers.HyperlinkedRelatedField(many=False, view_name='user-detail', queryset=User.objects.all())
+    participant = serializers.ReadOnlyField(source='participant.username')
 
     class Meta:
         model = Transaction

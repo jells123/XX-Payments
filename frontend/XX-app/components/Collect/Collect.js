@@ -38,8 +38,8 @@ class Collect extends Component {
           size: 5, checked: true,
           type: DivideOptionEnum.EVEN
         },
-        { 
-          label: "Custom...", color: '#fff', 
+        {
+          label: "Custom...", color: '#fff',
           size: 5, checked: false,
           type: DivideOptionEnum.CUSTOM
         },
@@ -51,10 +51,10 @@ class Collect extends Component {
   }
 
   createKittyRequest = () => {
-    
+
   // TODO:
   // disable 'CREATE' button when handling request/response
-  
+
   if (this.state.kittyAmount == 0.0) {
     return;
   }
@@ -102,7 +102,7 @@ class Collect extends Component {
         var funny = this;
         setTimeout(function () {
           funny.props.navigation.navigate('Wait', {
-            kittyData: responseJson,
+            kittyId: responseJson.id,
             username: funny.props.navigation.getParam("username", "")
           });
         }, 1000);
@@ -171,8 +171,8 @@ class Collect extends Component {
 
   _handleKittyAmount = (amount) => {
     this.setState(
-      { 
-        kittyAmount: amount 
+      {
+        kittyAmount: amount
       },
       () => {
         switch (this.getCurrentDivideOption()) {
@@ -189,7 +189,7 @@ class Collect extends Component {
   }
 
   _handleUserEntryCheck = (entryId) => {
-    
+
     let updatedActiveUsers = this.state.activeUsers;
     if (updatedActiveUsers[entryId].userAmount == "") {
       // add new user to the kitty (checked)
@@ -209,8 +209,8 @@ class Collect extends Component {
 
   onDivideOptionPress = (data) => {
     this.setState(
-      { 
-        divideOptions : data 
+      {
+        divideOptions : data
       },
       () => {
           switch (this.getCurrentDivideOption()) {
@@ -227,7 +227,7 @@ class Collect extends Component {
   };
 
   render() {
-    
+
     // receive active users from navigation props
     // and add more properties
     // TODO: separate server response vs data stored about that response?
@@ -259,7 +259,7 @@ class Collect extends Component {
     }
 
     return (
-      <ScrollView 
+      <ScrollView
         style={GlobalStyles.container}
         contentContainerStyle={{flex: 1}}
       >
@@ -288,7 +288,7 @@ class Collect extends Component {
           </View>
         </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.usersScrollView}
         contentContainerStyle={{flex: 1}}
       >
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     flex: 0.25,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     backgroundColor: '#8425a3',
     marginTop: 15,
     marginBottom: 15
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     fontSize: 17
   },
   usersScrollView: {
-    flex: 1, 
+    flex: 1,
     marginTop: 20, marginBottom: 10, marginLeft: 5, marginRight: 5,
     backgroundColor: '#8425a3'
   }
